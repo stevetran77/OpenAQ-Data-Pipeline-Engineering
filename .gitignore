@@ -5,6 +5,7 @@ venv/
 *.env
 config.conf
 config/config.conf
+!config/config.conf.example
 credentials/
 .DS_Store
 logs/
