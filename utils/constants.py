@@ -51,6 +51,27 @@ AWS_BUCKET_NAME = config.get("aws", "aws_bucket_name", fallback="")
 
 
 # ============================================================================
+# AWS GLUE CONFIGURATION
+# ============================================================================
+GLUE_DATABASE_NAME = config.get("aws_glue", "glue_database_name", fallback="openaq_database")
+GLUE_CRAWLER_NAME = config.get("aws_glue", "glue_crawler_name", fallback="openaq_s3_crawler")
+GLUE_ETL_JOB_NAME = config.get("aws_glue", "glue_etl_job_name", fallback="openaq_to_redshift")
+GLUE_IAM_ROLE = config.get("aws_glue", "glue_iam_role", fallback="")
+
+
+# ============================================================================
+# AWS REDSHIFT CONFIGURATION
+# ============================================================================
+REDSHIFT_HOST = config.get("aws_redshift", "redshift_host", fallback="")
+REDSHIFT_PORT = config.getint("aws_redshift", "redshift_port", fallback=5439)
+REDSHIFT_DATABASE = config.get("aws_redshift", "redshift_database", fallback="openaq_warehouse")
+REDSHIFT_USERNAME = config.get("aws_redshift", "redshift_username", fallback="")
+REDSHIFT_PASSWORD = config.get("aws_redshift", "redshift_password", fallback="")
+REDSHIFT_SCHEMA = config.get("aws_redshift", "redshift_schema", fallback="public")
+REDSHIFT_IAM_ROLE = config.get("aws_redshift", "redshift_iam_role", fallback="")
+
+
+# ============================================================================
 # ETL SETTINGS
 # ============================================================================
 BATCH_SIZE = config.getint("etl_settings", "batch_size", fallback=100)

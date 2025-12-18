@@ -1,0 +1,46 @@
+[database]
+database_host = localhost
+database_port = 5432
+database_name = airflow_reddit
+database_username = postgres
+database_password = postgres
+
+[file_paths]
+input_path = /opt/airflow/data/input
+output_path = /opt/airflow/data/output
+
+[aws]
+aws_access_key_id = YOUR_ACCESS_KEY
+aws_secret_access_key = YOUR_SECRET_KEY
+aws_session_token =
+aws_region = ap-southeast-1
+aws_bucket_name = openaq-data-pipeline
+
+[aws_glue]
+glue_database_name = openaq_database
+glue_crawler_name = openaq_s3_crawler
+glue_etl_job_name = openaq_to_redshift
+glue_iam_role = arn:aws:iam::ACCOUNT_ID:role/GlueServiceRole
+
+[aws_redshift]
+redshift_host = your-cluster.region.redshift.amazonaws.com
+redshift_port = 5439
+redshift_database = openaq_warehouse
+redshift_username = admin
+redshift_password = YOUR_PASSWORD
+redshift_schema = public
+redshift_iam_role = arn:aws:iam::ACCOUNT_ID:role/RedshiftS3Role
+
+[api_keys]
+openaq_api_key = YOUR_OPENAQ_API_KEY
+
+[openaq_settings]
+target_city = Hanoi
+target_country = VN
+data_granularity = hourly
+lookback_hours = 24
+
+[etl_settings]
+batch_size = 100
+error_handling = abort
+log_level = info
