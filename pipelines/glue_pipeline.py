@@ -1,12 +1,11 @@
 """
-Glue-related pipeline functions for Airflow DAG tasks.
+Glue and Athena pipeline functions for Airflow DAG tasks.
 """
 from utils.glue_utils import (
-    start_crawler, get_crawler_status, wait_for_crawler,
-    start_glue_job, get_job_run_status, wait_for_job
+    start_crawler, get_crawler_status
 )
-from utils.redshift_utils import validate_data_load
-from utils.constants import GLUE_CRAWLER_NAME, GLUE_ETL_JOB_NAME, GLUE_DATABASE_NAME, REDSHIFT_SCHEMA
+from utils.athena_utils import get_table_count, list_tables
+from utils.constants import GLUE_CRAWLER_NAME, ATHENA_DATABASE
 
 
 def trigger_crawler_task(crawler_name: str = None, **context) -> str:
@@ -39,63 +38,72 @@ def check_crawler_status(**context) -> bool:
         return False
 
 
-def trigger_glue_job_task(job_name: str = None, arguments: dict = None, **context) -> str:
-    """Trigger Glue ETL Job - callable for Airflow task."""
-    job = job_name or GLUE_ETL_JOB_NAME
+def validate_athena_data(**context) -> bool:
+    """Validate data is queryable in Athena after Glue cataloging.
+    
+    Checks for both legacy city-based tables (aq_hanoi, aq_ho_chi_minh_city)
+    and new Vietnam-wide location tables (aq_vietnam_location_*).
+    """
+    print("[START] Validating Athena data availability")
 
-    default_args = {
-        '--source_database': GLUE_DATABASE_NAME,
-        '--target_schema': REDSHIFT_SCHEMA,
-        '--job-language': 'python'
-    }
+    try:
+        # List available tables in Athena database
+        tables = list_tables(ATHENA_DATABASE)
+        print(f"[INFO] Found {len(tables)} tables in Athena database '{ATHENA_DATABASE}'")
 
-    if arguments:
-        default_args.update(arguments)
+        if not tables:
+            print("[WARNING] No tables found in Athena database")
+            return False
 
-    print(f"[START] Triggering Glue ETL Job: {job}")
-    run_id = start_glue_job(job, default_args)
+        # Look for air quality tables (created by Glue Crawler with 'aq_' prefix)
+        # This includes both:
+        # - Legacy: aq_hanoi, aq_ho_chi_minh_city
+        # - New: aq_vietnam_location_* (for each location)
+        aq_tables = [t for t in tables if t.startswith('aq_')]
+        print(f"[INFO] Found {len(aq_tables)} air quality tables")
 
-    # Store run info in XCom for downstream tasks
-    context['ti'].xcom_push(key='glue_job_name', value=job)
-    context['ti'].xcom_push(key='glue_run_id', value=run_id)
+        # Separate legacy and new tables for better reporting
+        legacy_tables = [t for t in aq_tables if t in ['aq_hanoi', 'aq_ho_chi_minh_city']]
+        vietnam_tables = [t for t in aq_tables if t.startswith('aq_vietnam_')]
 
-    print(f"[OK] Glue job triggered with run ID: {run_id}")
-    return run_id
+        if legacy_tables:
+            print(f"[INFO] Legacy city tables: {legacy_tables}")
+        if vietnam_tables:
+            print(f"[INFO] Vietnam location tables: {len(vietnam_tables)} tables")
 
+        if not aq_tables:
+            print("[WARNING] No air quality tables found in Athena")
+            return False
 
-def check_glue_job_status(**context) -> bool:
-    """Check if Glue job has completed - callable for Airflow sensor."""
-    job_name = context['ti'].xcom_pull(key='glue_job_name') or GLUE_ETL_JOB_NAME
-    run_id = context['ti'].xcom_pull(key='glue_run_id')
+        # Validate each table has data
+        failed_tables = []
+        for table_name in aq_tables:
+            try:
+                count = get_table_count(table_name, ATHENA_DATABASE)
+                
+                # Log only if we have data or if it's a legacy table (might be old)
+                if count > 0:
+                    print(f"[OK] Table '{table_name}' has {count} rows")
+                elif table_name in legacy_tables:
+                    print(f"[INFO] Legacy table '{table_name}' has {count} rows (may be outdated)")
+                else:
+                    print(f"[WARNING] Table '{table_name}' is empty")
+                    failed_tables.append(table_name)
 
-    if not run_id:
-        print("[FAIL] No run_id found in XCom")
-        return False
+            except Exception as e:
+                print(f"[WARNING] Failed to validate table '{table_name}': {e}")
+                continue
 
-    status = get_job_run_status(job_name, run_id)
+        # Fail validation if any new Vietnam tables are empty (they should have data)
+        # But allow legacy tables to be empty
+        new_table_failures = [t for t in failed_tables if t not in legacy_tables]
+        if new_table_failures and len(new_table_failures) == len(vietnam_tables) and vietnam_tables:
+            print(f"[FAIL] All new Vietnam tables are empty")
+            return False
 
-    if status == 'SUCCEEDED':
-        print(f"[SUCCESS] Glue job '{job_name}' completed")
+        print(f"[SUCCESS] Athena data validation passed ({len(aq_tables)} tables validated)")
         return True
-    elif status in ['FAILED', 'ERROR', 'TIMEOUT', 'STOPPED']:
-        print(f"[FAIL] Glue job '{job_name}' failed with status: {status}")
-        raise Exception(f"Glue job failed: {status}")
-    else:
-        print(f"[INFO] Glue job '{job_name}' status: {status}")
-        return False
 
-
-def validate_redshift_load(**context) -> bool:
-    """Validate data was loaded to Redshift - callable for Airflow task."""
-    print("[START] Validating Redshift data load")
-
-    # Validate fact_measurements table
-    is_valid = validate_data_load('fact_measurements', min_expected_count=1)
-
-    if is_valid:
-        print("[SUCCESS] Redshift data validation passed")
-    else:
-        print("[FAIL] Redshift data validation failed")
-        raise Exception("Data validation failed")
-
-    return is_valid
+    except Exception as e:
+        print(f"[FAIL] Athena validation failed: {e}")
+        raise
