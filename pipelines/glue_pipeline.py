@@ -1,12 +1,11 @@
 """
-Glue-related pipeline functions for Airflow DAG tasks.
+Glue and Athena pipeline functions for Airflow DAG tasks.
 """
 from utils.glue_utils import (
-    start_crawler, get_crawler_status, wait_for_crawler,
-    start_glue_job, get_job_run_status, wait_for_job
+    start_crawler, get_crawler_status
 )
-from utils.redshift_utils import validate_data_load
-from utils.constants import GLUE_CRAWLER_NAME, GLUE_ETL_JOB_NAME, GLUE_DATABASE_NAME, REDSHIFT_SCHEMA
+from utils.athena_utils import get_table_count, list_tables
+from utils.constants import GLUE_CRAWLER_NAME, ATHENA_DATABASE
 
 
 def trigger_crawler_task(crawler_name: str = None, **context) -> str:
@@ -39,63 +38,44 @@ def check_crawler_status(**context) -> bool:
         return False
 
 
-def trigger_glue_job_task(job_name: str = None, arguments: dict = None, **context) -> str:
-    """Trigger Glue ETL Job - callable for Airflow task."""
-    job = job_name or GLUE_ETL_JOB_NAME
+def validate_athena_data(**context) -> bool:
+    """Validate data is queryable in Athena after Glue cataloging."""
+    print("[START] Validating Athena data availability")
 
-    default_args = {
-        '--source_database': GLUE_DATABASE_NAME,
-        '--target_schema': REDSHIFT_SCHEMA,
-        '--job-language': 'python'
-    }
+    try:
+        # List available tables in Athena database
+        tables = list_tables(ATHENA_DATABASE)
+        print(f"[INFO] Found {len(tables)} tables in Athena database '{ATHENA_DATABASE}'")
 
-    if arguments:
-        default_args.update(arguments)
+        if not tables:
+            print("[WARNING] No tables found in Athena database")
+            return False
 
-    print(f"[START] Triggering Glue ETL Job: {job}")
-    run_id = start_glue_job(job, default_args)
+        # Look for air quality tables (created by Glue Crawler with 'aq_' prefix)
+        aq_tables = [t for t in tables if t.startswith('aq_')]
+        print(f"[INFO] Found {len(aq_tables)} air quality tables: {aq_tables}")
 
-    # Store run info in XCom for downstream tasks
-    context['ti'].xcom_push(key='glue_job_name', value=job)
-    context['ti'].xcom_push(key='glue_run_id', value=run_id)
+        if not aq_tables:
+            print("[WARNING] No air quality tables found in Athena")
+            return False
 
-    print(f"[OK] Glue job triggered with run ID: {run_id}")
-    return run_id
+        # Validate each table has data
+        for table_name in aq_tables:
+            try:
+                count = get_table_count(table_name, ATHENA_DATABASE)
+                print(f"[OK] Table '{table_name}' has {count} rows")
 
+                if count == 0:
+                    print(f"[WARNING] Table '{table_name}' is empty")
+                    return False
 
-def check_glue_job_status(**context) -> bool:
-    """Check if Glue job has completed - callable for Airflow sensor."""
-    job_name = context['ti'].xcom_pull(key='glue_job_name') or GLUE_ETL_JOB_NAME
-    run_id = context['ti'].xcom_pull(key='glue_run_id')
+            except Exception as e:
+                print(f"[WARNING] Failed to validate table '{table_name}': {e}")
+                continue
 
-    if not run_id:
-        print("[FAIL] No run_id found in XCom")
-        return False
-
-    status = get_job_run_status(job_name, run_id)
-
-    if status == 'SUCCEEDED':
-        print(f"[SUCCESS] Glue job '{job_name}' completed")
+        print("[SUCCESS] Athena data validation passed")
         return True
-    elif status in ['FAILED', 'ERROR', 'TIMEOUT', 'STOPPED']:
-        print(f"[FAIL] Glue job '{job_name}' failed with status: {status}")
-        raise Exception(f"Glue job failed: {status}")
-    else:
-        print(f"[INFO] Glue job '{job_name}' status: {status}")
-        return False
 
-
-def validate_redshift_load(**context) -> bool:
-    """Validate data was loaded to Redshift - callable for Airflow task."""
-    print("[START] Validating Redshift data load")
-
-    # Validate fact_measurements table
-    is_valid = validate_data_load('fact_measurements', min_expected_count=1)
-
-    if is_valid:
-        print("[SUCCESS] Redshift data validation passed")
-    else:
-        print("[FAIL] Redshift data validation failed")
-        raise Exception("Data validation failed")
-
-    return is_valid
+    except Exception as e:
+        print(f"[FAIL] Athena validation failed: {e}")
+        raise

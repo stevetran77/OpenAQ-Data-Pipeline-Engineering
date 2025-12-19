@@ -21,6 +21,7 @@ x-airflow-common:
     - ./utils:/opt/airflow/utils
    # - ./airflow.cfg:/opt/airflow/airflow.cfg
     - ./requirements.txt:/opt/airflow/requirements.txt
+    - .:/opt/airflow/project
   depends_on:
     - postgres
     - redis
