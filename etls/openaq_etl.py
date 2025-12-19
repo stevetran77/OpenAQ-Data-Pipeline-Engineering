@@ -1,190 +1,186 @@
-from openaq import OpenAQ
+import requests
 import pandas as pd
 from datetime import datetime, timedelta
 from utils.constants import OPENAQ_API_KEY
-import requests
+
+# Cấu hình API v3
+BASE_URL = "https://api.openaq.org/v3"
+
+def connect_openaq(api_key: str) -> dict:
+    """Create headers for OpenAQ API authentication."""
+    return {'X-API-Key': api_key}
 
 
-def connect_openaq(api_key: str) -> OpenAQ:
-    """
-    Create OpenAQ client with API key.
-
-    Args:
-        api_key: OpenAQ API key
-
-    Returns:
-        OpenAQ: Authenticated OpenAQ client
-
-    Raises:
-        Exception: If connection fails
-    """
-    try:
-        client = OpenAQ(api_key=api_key)
-        return client
-    except Exception as e:
-        raise Exception(f"Failed to create OpenAQ client: {str(e)}")
-
-
-def extract_locations(client: OpenAQ, city: str = None, country: str = None,
+def extract_locations(headers: dict, city: str = None, country: str = None,
                       coordinates: tuple = None, radius: int = 25000) -> list:
     """
-    Get all monitoring locations by geographic coordinates.
-
-    Args:
-        client: OpenAQ client instance
-        city: City name (used for reference only, not sent to API)
-        country: Country code (used for reference only, not sent to API)
-        coordinates: Tuple of (latitude, longitude) for location search
-        radius: Search radius in meters, max 25000 (25km). Default: 25km
-
-    Returns:
-        list: List of location IDs
-
-    Note:
-        OpenAQ API requires coordinates instead of city name.
-        Coordinates should be in format (latitude, longitude).
+    Get all monitoring locations by geographic coordinates using REST API.
     """
+    # City coordinates mapping (Lat, Lon)
+    city_coords = {
+        'Hanoi': (21.0285, 105.8542),
+        'Ho Chi Minh City': (10.7769, 106.7009),
+        'Da Nang': (16.0544, 108.2022),
+        'Nha Trang': (12.2388, 109.1967),
+        'Hai Phong': (20.8449, 106.6881),
+    }
+
+    if coordinates is None:
+        if city in city_coords:
+            coordinates = city_coords[city]
+        else:
+            raise Exception(f"City '{city}' not found. Please provide coordinates.")
+
+    print(f"[INFO] Searching locations near {city} - coordinates: {coordinates}, radius: {radius}m")
+
     try:
-        # City coordinates mapping
-        city_coords = {
-            'Hanoi': (21.0285, 105.8542),
-            'Ho Chi Minh City': (10.7769, 106.7009),
-            'Da Nang': (16.0544, 108.2022),
-            'Nha Trang': (12.2388, 109.1967),
-            'Hai Phong': (20.8449, 106.6881),
+        # Gọi API: GET /locations
+        # FIX: Đổi thứ tự thành lat,lng (coordinates[0], coordinates[1])
+        params = {
+            'coordinates': f"{coordinates[0]},{coordinates[1]}", 
+            'radius': radius,
+            'limit': 1000
         }
-
-        # Use provided coordinates or lookup by city name
-        if coordinates is None:
-            if city in city_coords:
-                coordinates = city_coords[city]
-            else:
-                raise Exception(f"City '{city}' not in predefined coordinates. Please provide coordinates tuple.")
-
-        print(f"[INFO] Searching locations near {city} - coordinates: {coordinates}, radius: {radius}m")
-
-        locations = client.locations.list(
-            coordinates=coordinates,
-            radius=radius,
-            limit=1000
-        )
-        location_ids = [loc.id for loc in locations.results]
+        
+        response = requests.get(f"{BASE_URL}/locations", headers=headers, params=params, timeout=30)
+        
+        # Thêm xử lý lỗi chi tiết hơn để debug nếu cần
+        if response.status_code != 200:
+            print(f"[FAIL] API Error {response.status_code}: {response.text}")
+            
+        response.raise_for_status()
+        
+        data = response.json()
+        locations = data.get('results', [])
+        
+        location_ids = [loc['id'] for loc in locations]
         print(f"[INFO] Found {len(location_ids)} locations near {city}")
         return location_ids
+        
     except Exception as e:
         raise Exception(f"Failed to extract locations: {str(e)}")
 
 
-def extract_measurements(client: OpenAQ, location_ids: list,
+def extract_measurements(headers: dict, location_ids: list,
                         date_from: datetime, date_to: datetime) -> list:
-    """
-    Extract hourly air quality measurements for given locations and time range.
-
-    Args:
-        client: OpenAQ client instance
-        location_ids: List of sensor/location IDs
-        date_from: Start datetime
-        date_to: End datetime
-
-    Returns:
-        list: List of measurement dictionaries
-
-    Note:
-        OpenAQ API uses sensors_id parameter, not locations_id.
-        datetime_from/datetime_to are the correct parameter names.
-    """
+    """Extract hourly air quality measurements using REST API."""
     all_measurements = []
 
-    for sensor_id in location_ids:
+    for loc_id in location_ids:
         try:
-            measurements = client.measurements.list(
-                sensors_id=sensor_id,
-                datetime_from=date_from.isoformat(),
-                datetime_to=date_to.isoformat(),
-                limit=1000
-            )
+            # BƯỚC 1: Lấy sensors của Location
+            url = f"{BASE_URL}/locations/{loc_id}"
+            resp = requests.get(url, headers=headers, timeout=30)
+            
+            if resp.status_code != 200:
+                continue
 
-            for measurement in measurements.results:
-                # Get datetime from period (API returns period, not direct datetime)
-                datetime_val = None
-                if measurement.period and measurement.period.datetime_from:
-                    datetime_val = measurement.period.datetime_from.local
+            data = resp.json()
+            results = data.get('results', [])
+            
+            if not results:
+                continue
+                
+            loc_details = results[0]
+            sensors = loc_details.get('sensors', [])
 
-                measurement_data = {
-                    'location_id': sensor_id,
-                    'parameter': measurement.parameter.name if measurement.parameter else None,
-                    'value': measurement.value,
-                    'unit': measurement.parameter.units if measurement.parameter else None,
-                    'datetime': datetime_val,
-                    'latitude': measurement.coordinates.latitude if measurement.coordinates else None,
-                    'longitude': measurement.coordinates.longitude if measurement.coordinates else None,
-                    'country': None,  # Not available in measurement object
-                    'city': None  # Not available in measurement object
-                }
-                all_measurements.append(measurement_data)
+            if not sensors:
+                continue
+
+            # BƯỚC 2: Duyệt từng Sensor
+            for sensor in sensors:
+                sensor_id = sensor.get('id')
+                if not sensor_id:
+                    continue
+
+                try:
+                    # BƯỚC 3: Lấy measurements
+                    meas_url = f"{BASE_URL}/sensors/{sensor_id}/measurements"
+                    meas_params = {
+                        'datetime_from': date_from.isoformat(),
+                        'datetime_to': date_to.isoformat(),
+                        'limit': 1000
+                    }
+                    
+                    meas_resp = requests.get(meas_url, headers=headers, params=meas_params, timeout=30)
+                    
+                    if meas_resp.status_code != 200:
+                        continue
+                        
+                    meas_data = meas_resp.json()
+                    measurements = meas_data.get('results', [])
+
+                    for m in measurements:
+                        datetime_val = None
+                        period = m.get('period', {})
+                        if period and 'datetimeFrom' in period:
+                            dt_obj = period['datetimeFrom']
+                            if isinstance(dt_obj, dict):
+                                datetime_val = dt_obj.get('local')
+                            else:
+                                datetime_val = dt_obj
+
+                        param_info = m.get('parameter', {})
+                        # Coordinates thường null ở level measurement, sẽ enrich sau
+                        
+                        measurement_data = {
+                            'location_id': loc_id,
+                            'parameter': param_info.get('name'),
+                            'value': m.get('value'),
+                            'unit': param_info.get('units'),
+                            'datetime': datetime_val,
+                            # Để null ở đây, sẽ điền ở bước enrich
+                            'latitude': None, 
+                            'longitude': None,
+                            'city': None,
+                            'country': None
+                        }
+                        all_measurements.append(measurement_data)
+                
+                except Exception:
+                    continue
 
         except Exception as e:
-            print(f"[WARNING] Failed to fetch measurements for sensor {sensor_id}: {e}")
+            print(f"[WARNING] Failed to process location {loc_id}: {e}")
             continue
 
     return all_measurements
 
 
 def transform_measurements(measurements: list) -> pd.DataFrame:
-    """
-    Transform raw measurements into structured DataFrame.
-
-    Args:
-        measurements: List of measurement dictionaries
-
-    Returns:
-        pd.DataFrame: Cleaned and pivoted DataFrame
-    """
+    """Transform raw measurements into structured DataFrame."""
     df = pd.DataFrame(measurements)
 
     if df.empty:
         return df
 
-    # Convert datetime
     df['datetime'] = pd.to_datetime(df['datetime'])
-
-    # Add extraction timestamp
     df['extracted_at'] = datetime.now()
 
-    # Pivot data so each parameter is a column
+    # SỬA QUAN TRỌNG: Chỉ pivot trên location_id và datetime
+    # Bỏ latitude, longitude ra khỏi index để tránh bị drop do null
     df_pivot = df.pivot_table(
-        index=['location_id', 'datetime', 'latitude', 'longitude', 'city', 'country', 'extracted_at'],
+        index=['location_id', 'datetime', 'extracted_at'],
         columns='parameter',
         values='value',
         aggfunc='mean'
     ).reset_index()
 
-    # Flatten column names
-    df_pivot.columns.name = None
+    # Khởi tạo lại các cột metadata để enrich
+    df_pivot['latitude'] = None
+    df_pivot['longitude'] = None
+    df_pivot['city'] = None
+    df_pivot['country'] = None
 
-    # Sort by datetime
+    df_pivot.columns.name = None
     df_pivot = df_pivot.sort_values('datetime').reset_index(drop=True)
 
     return df_pivot
 
 
-def fetch_all_vietnam_locations(client: OpenAQ, countries_id: int = 56,
+def fetch_all_vietnam_locations(headers: dict, countries_id: int = 56,
                                 page_size: int = 100) -> list:
-    """
-    Fetch ALL Vietnam locations using countries_id parameter.
-
-    Args:
-        client: OpenAQ client instance
-        countries_id: Vietnam country ID (default: 56)
-        page_size: Number of results per page (default: 100)
-
-    Returns:
-        list: List of location objects from OpenAQ API
-
-    Note:
-        Uses pagination to fetch all pages.
-        Returns full location objects with metadata: id, name, locality, coordinates, sensors, etc.
-    """
+    """Fetch ALL Vietnam locations."""
     try:
         all_locations = []
         page = 1
@@ -193,21 +189,27 @@ def fetch_all_vietnam_locations(client: OpenAQ, countries_id: int = 56,
         print(f"[INFO] Fetching ALL Vietnam locations (countries_id={countries_id})...")
 
         while True:
-            locations = client.locations.list(
-                countries_id=countries_id,
-                limit=page_size,
-                page=page
-            )
-
-            batch_count = len(locations.results) if locations.results else 0
-            if batch_count == 0:
+            params = {
+                'countries_id': countries_id,
+                'limit': page_size,
+                'page': page
+            }
+            
+            response = requests.get(f"{BASE_URL}/locations", headers=headers, params=params, timeout=30)
+            if response.status_code != 200:
+                print(f"[FAIL] API Error {response.status_code}: {response.text}")
+                break
+                
+            data = response.json()
+            results = data.get('results', [])
+            
+            if not results:
                 print(f"[INFO] Pagination complete at page {page}")
                 break
 
-            all_locations.extend(locations.results)
-            total_fetched += batch_count
-            print(f"[INFO] Page {page}: +{batch_count} locations (TOTAL: {total_fetched})")
-
+            all_locations.extend(results)
+            total_fetched += len(results)
+            print(f"[INFO] Page {page}: +{len(results)} locations (TOTAL: {total_fetched})")
             page += 1
 
         print(f"[SUCCESS] Fetched {len(all_locations)} Vietnam locations")
@@ -215,27 +217,12 @@ def fetch_all_vietnam_locations(client: OpenAQ, countries_id: int = 56,
 
     except Exception as e:
         print(f"[FAIL] Failed to fetch Vietnam locations: {str(e)}")
-        raise Exception(f"Failed to fetch Vietnam locations: {str(e)}")
+        raise
 
 
 def filter_active_locations(locations: list, lookback_days: int = 7,
                             required_parameters: list = None) -> list:
-    """
-    Filter for active locations with recent data and required sensors.
-
-    Args:
-        locations: List of location objects from OpenAQ API
-        lookback_days: Only include locations with data in last N days (default: 7)
-        required_parameters: List of required sensor parameter names
-                           (default: ['PM2.5', 'PM10'])
-
-    Returns:
-        list: Filtered list of location objects
-
-    Note:
-        Filters based on datetimeLast field to ensure location is active.
-        Checks sensors array for required parameter types (case-insensitive).
-    """
+    """Filter active locations."""
     if required_parameters is None:
         required_parameters = ['PM2.5', 'PM10']
 
@@ -243,108 +230,81 @@ def filter_active_locations(locations: list, lookback_days: int = 7,
         filtered_locations = []
         cutoff_date = datetime.utcnow() - timedelta(days=lookback_days)
 
-        print(f"[INFO] Filtering locations: lookback={lookback_days} days, required_params={required_parameters}")
+        print(f"[INFO] Filtering locations: lookback={lookback_days} days")
 
-        for location in locations:
-            # Check if location has recent data
-            datetime_last = location.datetime_last
-            if not datetime_last:
-                continue
+        for loc in locations:
+            dt_last = loc.get('datetimeLast')
+            if not dt_last: continue
+                
+            last_dt_str = dt_last.get('utc') if isinstance(dt_last, dict) else str(dt_last)
+            if not last_dt_str: continue
 
-            # Handle Datetime object with 'utc' attribute (OpenAQ SDK format)
-            if hasattr(datetime_last, 'utc'):
-                last_datetime_str = datetime_last.utc
-            elif isinstance(datetime_last, dict):
-                last_datetime_str = datetime_last.get('utc')
-            else:
-                last_datetime_str = str(datetime_last) if datetime_last else None
-
-            if not last_datetime_str:
-                continue
-
-            # Convert to datetime
             try:
-                last_datetime = pd.to_datetime(last_datetime_str)
-            except Exception:
-                continue
+                last_datetime = pd.to_datetime(last_dt_str).replace(tzinfo=None)
+            except: continue
 
-            # Check if within lookback period
-            if last_datetime.replace(tzinfo=None) < cutoff_date:
-                continue
+            if last_datetime < cutoff_date: continue
 
-            # Check if location has required sensors
-            sensors = location.sensors if hasattr(location, 'sensors') else []
+            sensors = loc.get('sensors', [])
             sensor_params = []
+            for s in sensors:
+                p = s.get('parameter', {})
+                p_name = p.get('name') if isinstance(p, dict) else None
+                if p_name: sensor_params.append(p_name)
 
-            for sensor in sensors:
-                param_name = None
-                if hasattr(sensor, 'parameter'):
-                    if hasattr(sensor.parameter, 'name'):
-                        param_name = sensor.parameter.name
-                    elif isinstance(sensor.parameter, dict):
-                        param_name = sensor.parameter.get('name')
+            has_required = any(req.lower() in p.lower() for req in required_parameters for p in sensor_params)
 
-                if param_name:
-                    sensor_params.append(param_name)
-
-            # Check if any required parameter is present
-            has_required_param = any(
-                req_param.lower() in str(p).lower()
-                for req_param in required_parameters
-                for p in sensor_params
-            )
-
-            if has_required_param:
-                filtered_locations.append(location)
+            if has_required:
+                filtered_locations.append(loc)
 
         print(f"[SUCCESS] Filtered to {len(filtered_locations)} active locations")
         return filtered_locations
 
     except Exception as e:
         print(f"[FAIL] Failed to filter locations: {str(e)}")
-        raise Exception(f"Failed to filter locations: {str(e)}")
+        raise
 
 
 def enrich_measurements_with_metadata(df: pd.DataFrame, locations: list) -> pd.DataFrame:
     """
-    Add location metadata to measurements DataFrame.
-
-    Args:
-        df: Measurements DataFrame
-        locations: List of location objects from OpenAQ API
-
-    Returns:
-        pd.DataFrame: Enriched DataFrame with location_name, locality, timezone columns
-
-    Note:
-        Creates a mapping from location_id to location metadata.
-        Adds new columns: location_name, locality, timezone, country_code
+    Enrich DataFrame with metadata including COORDINATES from location list.
     """
     try:
         if df.empty:
-            print("[WARNING] Empty DataFrame provided, returning as-is")
             return df
 
-        # Create location_id -> metadata mapping
         location_map = {}
-        for location in locations:
-            location_map[location.id] = {
-                'location_name': location.name if hasattr(location, 'name') else None,
-                'locality': location.locality if hasattr(location, 'locality') else None,
-                'timezone': location.timezone if hasattr(location, 'timezone') else None,
-                'country_code': location.country.code if (hasattr(location, 'country') and
-                                                          hasattr(location.country, 'code')) else None,
+        for loc in locations:
+            loc_id = loc.get('id')
+            country = loc.get('country', {})
+            coords = loc.get('coordinates', {}) # Lấy tọa độ từ thông tin trạm
+            
+            location_map[loc_id] = {
+                'location_name': loc.get('name'),
+                'locality': loc.get('locality'),
+                'timezone': loc.get('timezone'),
+                'country_code': country.get('code') if isinstance(country, dict) else None,
+                'latitude': coords.get('latitude') if coords else None,
+                'longitude': coords.get('longitude') if coords else None
             }
 
-        # Add columns to dataframe
+        # Enrich tất cả thông tin metadata
         df['location_name'] = df['location_id'].map(lambda x: location_map.get(x, {}).get('location_name'))
         df['locality'] = df['location_id'].map(lambda x: location_map.get(x, {}).get('locality'))
         df['timezone'] = df['location_id'].map(lambda x: location_map.get(x, {}).get('timezone'))
         df['country_code'] = df['location_id'].map(lambda x: location_map.get(x, {}).get('country_code'))
+        
+        # CẬP NHẬT: Điền Lat/Lon từ Metadata
+        df['latitude'] = df['location_id'].map(lambda x: location_map.get(x, {}).get('latitude'))
+        df['longitude'] = df['location_id'].map(lambda x: location_map.get(x, {}).get('longitude'))
 
-        print(f"[SUCCESS] Enriched {len(df)} records with location metadata")
+        # Điền City/Country
+        df['city'] = df['locality'].fillna('Unknown')
+        df['country'] = df['country_code'].fillna('VN')
+
+        print(f"[SUCCESS] Enriched {len(df)} records")
         return df
 
     except Exception as e:
-        print(f"[FAIL] Failed to enrich measurements: {str(e)}")
-        raise Exception(f"Failed to enrich measurements: {str(e)}")
+        print(f"[FAIL] Failed to enrich: {str(e)}")
+        raise
