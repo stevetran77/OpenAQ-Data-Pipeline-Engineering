@@ -3,10 +3,11 @@ sys.path.insert(0, '/opt/airflow/')
 
 from airflow import DAG
 from datetime import datetime, timedelta
+from airflow.operators.python import PythonOperator
 
-from tasks.extract_tasks import create_extraction_tasks
 from tasks.catalog_tasks import create_catalog_tasks
 from tasks.validation_tasks import create_validate_athena_task
+from pipelines.openaq_pipeline import openaq_pipeline
 
 # DAG Configuration
 default_args = {
@@ -31,24 +32,26 @@ dag = DAG(
     tags=['openaq', 'airquality', 'etl', 's3', 'glue', 'athena', 'pipeline']
 )
 
-# Define cities to extract data from
-cities_config = [
-    {
-        'city': 'Hanoi',
-        'country': 'VN',
+# NEW: Create Vietnam-wide extraction task (extract all locations)
+# Replaces city-based extraction (Hanoi, HCMC) for efficiency
+extract_all_vietnam = PythonOperator(
+    task_id='extract_all_vietnam_locations',
+    python_callable=openaq_pipeline,
+    op_kwargs={
+        'file_name': 'vietnam_national_{{ ts_nodash }}',
+        'vietnam_wide': True,  # Enable Vietnam-wide extraction
         'lookback_hours': 24,
-        'retries': 2
+        'api_limit': 1000,
+        'max_sensor_retries': 3,
+        'parameters': ['pm25', 'pm10', 'no2', 'so2', 'o3', 'co']
     },
-    {
-        'city': 'Ho Chi Minh City',
-        'country': 'VN',
-        'lookback_hours': 24,
-        'retries': 2
-    }
-]
+    dag=dag,
+    retries=2,
+    retry_delay=timedelta(minutes=5)
+)
 
-# Create extraction tasks (runs in parallel)
-extraction_tasks = create_extraction_tasks(dag, cities_config)
+# Single extraction task (contains all Vietnam locations including Hanoi and HCMC)
+extraction_tasks = [extract_all_vietnam]
 
 # Create catalog tasks (trigger + wait)
 trigger_crawler_task, wait_crawler_task = create_catalog_tasks(dag)
@@ -57,5 +60,5 @@ trigger_crawler_task, wait_crawler_task = create_catalog_tasks(dag)
 validate_task = create_validate_athena_task(dag)
 
 # Task Dependencies
-# Extract tasks run in parallel -> trigger crawler -> wait for crawler -> validate data
-extraction_tasks >> trigger_crawler_task >> wait_crawler_task >> validate_task
+# Single Vietnam-wide extraction -> trigger crawler -> wait for crawler -> validate data
+extract_all_vietnam >> trigger_crawler_task >> wait_crawler_task >> validate_task

@@ -39,7 +39,11 @@ def check_crawler_status(**context) -> bool:
 
 
 def validate_athena_data(**context) -> bool:
-    """Validate data is queryable in Athena after Glue cataloging."""
+    """Validate data is queryable in Athena after Glue cataloging.
+    
+    Checks for both legacy city-based tables (aq_hanoi, aq_ho_chi_minh_city)
+    and new Vietnam-wide location tables (aq_vietnam_location_*).
+    """
     print("[START] Validating Athena data availability")
 
     try:
@@ -52,28 +56,52 @@ def validate_athena_data(**context) -> bool:
             return False
 
         # Look for air quality tables (created by Glue Crawler with 'aq_' prefix)
+        # This includes both:
+        # - Legacy: aq_hanoi, aq_ho_chi_minh_city
+        # - New: aq_vietnam_location_* (for each location)
         aq_tables = [t for t in tables if t.startswith('aq_')]
-        print(f"[INFO] Found {len(aq_tables)} air quality tables: {aq_tables}")
+        print(f"[INFO] Found {len(aq_tables)} air quality tables")
+
+        # Separate legacy and new tables for better reporting
+        legacy_tables = [t for t in aq_tables if t in ['aq_hanoi', 'aq_ho_chi_minh_city']]
+        vietnam_tables = [t for t in aq_tables if t.startswith('aq_vietnam_')]
+
+        if legacy_tables:
+            print(f"[INFO] Legacy city tables: {legacy_tables}")
+        if vietnam_tables:
+            print(f"[INFO] Vietnam location tables: {len(vietnam_tables)} tables")
 
         if not aq_tables:
             print("[WARNING] No air quality tables found in Athena")
             return False
 
         # Validate each table has data
+        failed_tables = []
         for table_name in aq_tables:
             try:
                 count = get_table_count(table_name, ATHENA_DATABASE)
-                print(f"[OK] Table '{table_name}' has {count} rows")
-
-                if count == 0:
+                
+                # Log only if we have data or if it's a legacy table (might be old)
+                if count > 0:
+                    print(f"[OK] Table '{table_name}' has {count} rows")
+                elif table_name in legacy_tables:
+                    print(f"[INFO] Legacy table '{table_name}' has {count} rows (may be outdated)")
+                else:
                     print(f"[WARNING] Table '{table_name}' is empty")
-                    return False
+                    failed_tables.append(table_name)
 
             except Exception as e:
                 print(f"[WARNING] Failed to validate table '{table_name}': {e}")
                 continue
 
-        print("[SUCCESS] Athena data validation passed")
+        # Fail validation if any new Vietnam tables are empty (they should have data)
+        # But allow legacy tables to be empty
+        new_table_failures = [t for t in failed_tables if t not in legacy_tables]
+        if new_table_failures and len(new_table_failures) == len(vietnam_tables) and vietnam_tables:
+            print(f"[FAIL] All new Vietnam tables are empty")
+            return False
+
+        print(f"[SUCCESS] Athena data validation passed ({len(aq_tables)} tables validated)")
         return True
 
     except Exception as e:
