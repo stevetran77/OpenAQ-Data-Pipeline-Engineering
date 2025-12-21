@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an OpenAQ Air Quality Data Pipeline using Apache Airflow 3.1.5 with Python 3.11. The project implements an end-to-end ETL pipeline that extracts air quality data from OpenAQ API, loads to S3 (Parquet), catalogs with AWS Glue, transforms and queries with Amazon Athena, and visualizes with Looker. The architecture uses Airflow's CeleryExecutor with PostgreSQL for metadata storage and Redis as the message broker.
+This is an OpenAQ Air Quality Data Pipeline using Apache Airflow 3.1.5 with Python 3.11. The project implements an end-to-end ETL pipeline that extracts air quality data from OpenAQ API, loads to S3 (Parquet), catalogs with AWS Glue, transforms and queries with Amazon Athena, and visualizes with Looker. The architecture uses Airflow's LocalExecutor with PostgreSQL for metadata storage.
 
 ## Architecture
 
@@ -23,12 +23,11 @@ The pipeline orchestrates these steps through a single Airflow DAG (`openaq_to_r
 
 ### Core Components
 
-- **Airflow Orchestration**: Manages DAG workflows with CeleryExecutor for parallel task execution
+- **Airflow Orchestration**: Manages DAG workflows with LocalExecutor
 - **OpenAQ Integration**: `etls/openaq_etl.py` handles API connection, location extraction, and measurement retrieval
 - **AWS Services**: S3 for data lake, Glue for cataloging and schema management, Athena for serverless SQL queries
 - **Data Partitioning**: S3 files organized by `airquality/{city}/year={Y}/month={M}/day={D}/data.parquet`
 - **PostgreSQL Database**: Stores Airflow metadata (database name: `airflow_reddit` - legacy naming)
-- **Redis**: Message broker for Celery task queue
 
 ### Directory Structure
 
@@ -114,7 +113,6 @@ docker-compose up -d
 Services:
 - Airflow Webserver: http://localhost:8080 (admin/admin)
 - PostgreSQL: localhost:5432 (postgres/postgres)
-- Redis: localhost:6379
 
 ### Running Tests
 
@@ -213,9 +211,7 @@ The pipeline requires these AWS resources (created manually via Console):
 
 ### Environment Variables (airflow.env)
 
-- `AIRFLOW__CORE__EXECUTOR`: CeleryExecutor
-- `AIRFLOW__CELERY__BROKER_URL`: Redis connection
-- `AIRFLOW__CELERY__RESULT_BACKEND`: PostgreSQL for task results
+- `AIRFLOW__CORE__EXECUTOR`: LocalExecutor
 - `AIRFLOW__DATABASE__SQL_ALCHEMY_CONN`: PostgreSQL metadata DB
 - `AIRFLOW__CORE__FERNET_KEY`: Encryption key (rotate for production)
 - `AIRFLOW__CORE__LOAD_EXAMPLES`: False
