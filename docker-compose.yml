@@ -24,7 +24,6 @@ x-airflow-common:
     - .:/opt/airflow/project
   depends_on:
     - postgres
-    - redis
 
 services:
   postgres:
@@ -44,19 +43,6 @@ services:
       retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-    container_name: airflow-redis
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - redis_data:/data
 
   airflow-init:
     <<: *airflow-common
@@ -93,16 +79,5 @@ services:
       retries: 3
     restart: unless-stopped
 
-  airflow-worker:
-    <<: *airflow-common
-    container_name: airflow-worker
-    command: celery worker
-    environment:
-      DASK_DISTRIBUTED__WORKER__MEMORY__TARGET: 0.9
-      DASK_DISTRIBUTED__WORKER__MEMORY__SPILL: 0.85
-      DASK_DISTRIBUTED__WORKER__MEMORY__PAUSE: 0.80
-    restart: unless-stopped
-
 volumes:
   postgres_data:
-  redis_data:

@@ -6,7 +6,7 @@ COPY requirements.txt /opt/airflow/
 USER root
 # [THÊM] Cài đặt Java (OpenJDK 17) và procps (cần cho Spark)
 RUN apt-get update && \
-    apt-get install -y gcc python3-dev openjdk-17-jdk-headless procps && \
+    apt-get install -y gcc g++ python3-dev openjdk-17-jdk build-essential procps && \
     apt-get clean
 
 # [THÊM] Thiết lập biến môi trường JAVA_HOME
@@ -15,7 +15,8 @@ ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 USER airflow
 
 # Install additional requirements
-RUN pip install --no-cache-dir --prefer-binary \
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir --prefer-binary \
     'boto3>=1.26.0' \
     'awswrangler>=3.0.0' \
     'redshift-connector>=2.1.0' \
