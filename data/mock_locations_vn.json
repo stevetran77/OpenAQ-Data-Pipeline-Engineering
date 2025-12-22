@@ -1,0 +1,4531 @@
+{
+  "meta": {
+    "name": "openaq-api",
+    "website": "/",
+    "page": 1,
+    "limit": 100,
+    "found": 53
+  },
+  "results": [
+    {
+      "id": 18,
+      "name": "SPARTAN - Vietnam Acad. Sci.",
+      "locality": null,
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 226,
+        "name": "Spartan"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 37,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.048,
+        "longitude": 105.8
+      },
+      "licenses": null,
+      "bounds": [
+        105.8,
+        21.048,
+        105.8,
+        21.048
+      ],
+      "distance": null,
+      "datetimeFirst": null,
+      "datetimeLast": null
+    },
+    {
+      "id": 2446,
+      "name": "US Diplomatic Post: Ho Chi Minh City",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 201,
+        "name": "Ho Chi Minh City"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 4681,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.783041,
+        "longitude": 106.700722
+      },
+      "licenses": null,
+      "bounds": [
+        106.700722,
+        10.783041,
+        106.700722,
+        10.783041
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2016-02-29T01:00:00Z",
+        "local": "2016-02-29T08:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2016-11-09T16:00:00Z",
+        "local": "2016-11-09T23:00:00+07:00"
+      }
+    },
+    {
+      "id": 2539,
+      "name": "US Diplomatic Post: Hanoi",
+      "locality": null,
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 253,
+        "name": "StateAir Hanoi"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 5049,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.02177,
+        "longitude": 105.819002
+      },
+      "licenses": null,
+      "bounds": [
+        105.819002,
+        21.02177,
+        105.819002,
+        21.02177
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2016-01-30T01:00:00Z",
+        "local": "2016-01-30T08:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2016-11-09T16:00:00Z",
+        "local": "2016-11-09T23:00:00+07:00"
+      }
+    },
+    {
+      "id": 7440,
+      "name": "US Diplomatic Post: Ho Chi Minh City",
+      "locality": "Ho Chi Minh City",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 201,
+        "name": "Ho Chi Minh City"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 21631,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.782773,
+        "longitude": 106.700035
+      },
+      "licenses": null,
+      "bounds": [
+        106.700035,
+        10.782773,
+        106.700035,
+        10.782773
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2016-11-09T17:00:00Z",
+        "local": "2016-11-10T00:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-03-04T12:00:00Z",
+        "local": "2025-03-04T19:00:00+07:00"
+      }
+    },
+    {
+      "id": 7441,
+      "name": "Hanoi",
+      "locality": "N/A",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 119,
+        "name": "AirNow"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 21632,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.021939,
+        "longitude": 105.818806
+      },
+      "licenses": [
+        {
+          "id": 33,
+          "name": "US Public Domain",
+          "attribution": {
+            "name": "Unknown Governmental Organization",
+            "url": null
+          },
+          "dateFrom": "2016-01-30",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        105.818806,
+        21.021939,
+        105.818806,
+        21.021939
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2016-11-09T18:00:00Z",
+        "local": "2016-11-10T01:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-04-09T15:00:00Z",
+        "local": "2025-04-09T22:00:00+07:00"
+      }
+    },
+    {
+      "id": 268816,
+      "name": "outdoor",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 6,
+        "name": "Unknown Community Organization"
+      },
+      "provider": {
+        "id": 200,
+        "name": "HabitatMap"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 5,
+          "name": "HabitatMap Sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 1552804,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.694526659,
+        "longitude": 106.721235998
+      },
+      "licenses": null,
+      "bounds": [
+        106.721235998,
+        10.694526659,
+        106.721235998,
+        10.694526659
+      ],
+      "distance": null,
+      "datetimeFirst": null,
+      "datetimeLast": null
+    },
+    {
+      "id": 268821,
+      "name": "outdoor2",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 6,
+        "name": "Unknown Community Organization"
+      },
+      "provider": {
+        "id": 200,
+        "name": "HabitatMap"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 5,
+          "name": "HabitatMap Sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 1552809,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.694870278,
+        "longitude": 106.721544452
+      },
+      "licenses": null,
+      "bounds": [
+        106.721544452,
+        10.694870278,
+        106.721544452,
+        10.694870278
+      ],
+      "distance": null,
+      "datetimeFirst": null,
+      "datetimeLast": null
+    },
+    {
+      "id": 268929,
+      "name": "od3",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 6,
+        "name": "Unknown Community Organization"
+      },
+      "provider": {
+        "id": 200,
+        "name": "HabitatMap"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 5,
+          "name": "HabitatMap Sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 1553310,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.694685455,
+        "longitude": 106.721574962
+      },
+      "licenses": null,
+      "bounds": [
+        106.721574962,
+        10.694685455,
+        106.721574962,
+        10.694685455
+      ],
+      "distance": null,
+      "datetimeFirst": null,
+      "datetimeLast": null
+    },
+    {
+      "id": 268935,
+      "name": "od5",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 6,
+        "name": "Unknown Community Organization"
+      },
+      "provider": {
+        "id": 200,
+        "name": "HabitatMap"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 5,
+          "name": "HabitatMap Sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 1553316,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.715946249,
+        "longitude": 106.729752682
+      },
+      "licenses": null,
+      "bounds": [
+        106.729752682,
+        10.715946249,
+        106.729752682,
+        10.715946249
+      ],
+      "distance": null,
+      "datetimeFirst": null,
+      "datetimeLast": null
+    },
+    {
+      "id": 268937,
+      "name": "od6",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 6,
+        "name": "Unknown Community Organization"
+      },
+      "provider": {
+        "id": 200,
+        "name": "HabitatMap"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 5,
+          "name": "HabitatMap Sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 1553318,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.694870278,
+        "longitude": 106.721540764
+      },
+      "licenses": null,
+      "bounds": [
+        106.721540764,
+        10.694870278,
+        106.721540764,
+        10.694870278
+      ],
+      "distance": null,
+      "datetimeFirst": null,
+      "datetimeLast": null
+    },
+    {
+      "id": 307169,
+      "name": "nồng độ pm",
+      "locality": null,
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 6,
+        "name": "Unknown Community Organization"
+      },
+      "provider": {
+        "id": 200,
+        "name": "HabitatMap"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 5,
+          "name": "HabitatMap Sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 1742521,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.027764483,
+        "longitude": 105.834159739
+      },
+      "licenses": null,
+      "bounds": [
+        105.834159739,
+        21.027764483,
+        105.834159739,
+        21.027764483
+      ],
+      "distance": null,
+      "datetimeFirst": null,
+      "datetimeLast": null
+    },
+    {
+      "id": 1285357,
+      "name": "SPARTAN - Vietnam Acad. Sci.",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 64,
+        "name": "SPARTAN Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 6566240,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0478,
+        "longitude": 105.8
+      },
+      "licenses": null,
+      "bounds": [
+        105.8,
+        21.0478,
+        105.8,
+        21.0478
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2019-11-28T03:00:00Z",
+        "local": "2019-11-28T10:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2020-06-23T14:00:00Z",
+        "local": "2020-06-23T21:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161290,
+      "name": "An Khánh",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7771981,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772033,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772095,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772012,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0024,
+        "longitude": 105.7181
+      },
+      "licenses": null,
+      "bounds": [
+        105.7181,
+        21.0024,
+        105.7181,
+        21.0024
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-06-10T03:00:00Z",
+        "local": "2025-06-10T10:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161291,
+      "name": "Cầu Diễn",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772103,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7771974,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772105,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772023,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0398,
+        "longitude": 105.7652
+      },
+      "licenses": null,
+      "bounds": [
+        105.7652,
+        21.0398,
+        105.7652,
+        21.0398
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-22T01:00:00Z",
+        "local": "2024-01-22T08:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-12-11T14:00:00Z",
+        "local": "2024-12-11T21:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161292,
+      "name": "Số 46, phố Lưu Quang Vũ",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772024,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7888636,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772022,
+          "name": "o3 µg/m³",
+          "parameter": {
+            "id": 3,
+            "name": "o3",
+            "units": "µg/m³",
+            "displayName": "O₃ mass"
+          }
+        },
+        {
+          "id": 7772048,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772032,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 7771973,
+          "name": "so2 µg/m³",
+          "parameter": {
+            "id": 6,
+            "name": "so2",
+            "units": "µg/m³",
+            "displayName": "SO₂ mass"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0152,
+        "longitude": 105.7999
+      },
+      "licenses": null,
+      "bounds": [
+        105.7999,
+        21.0152,
+        105.7999,
+        21.0152
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T16:00:00Z",
+        "local": "2024-01-29T23:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-12-22T05:00:00Z",
+        "local": "2025-12-22T12:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161293,
+      "name": "Chúc Sơn",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772064,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772027,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772077,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772046,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.92,
+        "longitude": 105.7123
+      },
+      "licenses": null,
+      "bounds": [
+        105.7123,
+        20.92,
+        105.7123,
+        20.92
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-09T21:00:00Z",
+        "local": "2024-01-10T04:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-02-05T08:00:00Z",
+        "local": "2025-02-05T15:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161294,
+      "name": "Cung thiếu nhi",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772083,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7771978,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772082,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772104,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0284,
+        "longitude": 105.8556
+      },
+      "licenses": null,
+      "bounds": [
+        105.8556,
+        21.0284,
+        105.8556,
+        21.0284
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-02-05T03:00:00Z",
+        "local": "2025-02-05T10:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161295,
+      "name": "Đầm Trấu",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772081,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772045,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7771991,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7771992,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0119,
+        "longitude": 105.8644
+      },
+      "licenses": null,
+      "bounds": [
+        105.8644,
+        21.0119,
+        105.8644,
+        21.0119
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-01-30T08:00:00Z",
+        "local": "2024-01-30T15:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161296,
+      "name": "Đào Duy Từ",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7771983,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772030,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772101,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772040,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0354,
+        "longitude": 105.8529
+      },
+      "licenses": null,
+      "bounds": [
+        105.8529,
+        21.0354,
+        105.8529,
+        21.0354
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-15T07:00:00Z",
+        "local": "2024-01-15T14:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-06-10T03:00:00Z",
+        "local": "2025-06-10T10:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161297,
+      "name": "Đội Bình",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772086,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772017,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7771979,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7771980,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.6486,
+        "longitude": 105.8204
+      },
+      "licenses": null,
+      "bounds": [
+        105.8204,
+        20.6486,
+        105.8204,
+        20.6486
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-10-02T18:00:00Z",
+        "local": "2024-10-03T01:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161298,
+      "name": "Đông Kinh Nghĩa Thục",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772090,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772026,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772085,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772025,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.032,
+        "longitude": 105.8515
+      },
+      "licenses": null,
+      "bounds": [
+        105.8515,
+        21.032,
+        105.8515,
+        21.032
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-04-15T09:00:00Z",
+        "local": "2024-04-15T16:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161299,
+      "name": "Hàng Đậu",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772019,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772102,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772005,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7771996,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0399,
+        "longitude": 105.8473
+      },
+      "licenses": null,
+      "bounds": [
+        105.8473,
+        21.0399,
+        105.8473,
+        21.0399
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T07:00:00Z",
+        "local": "2024-01-29T14:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-11-26T18:00:00Z",
+        "local": "2024-11-27T01:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161300,
+      "name": "Hoàn Kiếm",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772043,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7771987,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772000,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7771988,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0263,
+        "longitude": 105.8515
+      },
+      "licenses": null,
+      "bounds": [
+        105.8515,
+        21.0263,
+        105.8515,
+        21.0263
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-01-31T23:00:00Z",
+        "local": "2024-02-01T06:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161301,
+      "name": "Khương Trung",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772052,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772050,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772039,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772073,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.9949,
+        "longitude": 105.8167
+      },
+      "licenses": null,
+      "bounds": [
+        105.8167,
+        20.9949,
+        105.8167,
+        20.9949
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-12-11T15:00:00Z",
+        "local": "2024-12-11T22:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161302,
+      "name": "Kim Bài",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772069,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772107,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7771997,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7771977,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.858,
+        "longitude": 105.7656
+      },
+      "licenses": null,
+      "bounds": [
+        105.7656,
+        20.858,
+        105.7656,
+        20.858
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-12-08T15:00:00Z",
+        "local": "2024-12-08T22:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161303,
+      "name": "Kim Liên",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772080,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772093,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772018,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772038,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0074,
+        "longitude": 105.8358
+      },
+      "licenses": null,
+      "bounds": [
+        105.8358,
+        21.0074,
+        105.8358,
+        21.0074
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-03-22T06:00:00Z",
+        "local": "2024-03-22T13:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161304,
+      "name": "Lê Trực",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772010,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772021,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7771993,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772096,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0327,
+        "longitude": 105.8329
+      },
+      "licenses": null,
+      "bounds": [
+        105.8329,
+        21.0327,
+        105.8329,
+        21.0327
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-01-31T00:00:00Z",
+        "local": "2024-01-31T07:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161305,
+      "name": "Liên Quan",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772106,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772013,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772029,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772053,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.056,
+        "longitude": 105.578
+      },
+      "licenses": null,
+      "bounds": [
+        105.578,
+        21.056,
+        105.578,
+        21.056
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-23T22:00:00Z",
+        "local": "2024-01-24T05:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-02-05T06:00:00Z",
+        "local": "2025-02-05T13:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161306,
+      "name": "Minh Khai - Bắc Từ Liêm",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7771995,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772100,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772097,
+          "name": "o3 µg/m³",
+          "parameter": {
+            "id": 3,
+            "name": "o3",
+            "units": "µg/m³",
+            "displayName": "O₃ mass"
+          }
+        },
+        {
+          "id": 7772055,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772087,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 7772047,
+          "name": "so2 µg/m³",
+          "parameter": {
+            "id": 6,
+            "name": "so2",
+            "units": "µg/m³",
+            "displayName": "SO₂ mass"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.05,
+        "longitude": 105.74
+      },
+      "licenses": null,
+      "bounds": [
+        105.74,
+        21.05,
+        105.74,
+        21.05
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T16:00:00Z",
+        "local": "2024-01-29T23:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-08-18T07:00:00Z",
+        "local": "2025-08-18T14:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161307,
+      "name": "Mỹ Đình",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772063,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772108,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772031,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7771998,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0269,
+        "longitude": 105.7731
+      },
+      "licenses": null,
+      "bounds": [
+        105.7731,
+        21.0269,
+        105.7731,
+        21.0269
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-28T22:00:00Z",
+        "local": "2024-01-29T05:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-01-30T04:00:00Z",
+        "local": "2024-01-30T11:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161308,
+      "name": "Phạm Văn Đồng",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772051,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772056,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772110,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772088,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.05,
+        "longitude": 105.782
+      },
+      "licenses": null,
+      "bounds": [
+        105.782,
+        21.05,
+        105.782,
+        21.05
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-22T07:00:00Z",
+        "local": "2024-01-22T14:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-01-22T08:00:00Z",
+        "local": "2024-01-22T15:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161309,
+      "name": "Pháp Vân",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772084,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772091,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772014,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772016,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.9481,
+        "longitude": 105.8493
+      },
+      "licenses": null,
+      "bounds": [
+        105.8493,
+        20.9481,
+        105.8493,
+        20.9481
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-02-05T04:00:00Z",
+        "local": "2025-02-05T11:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161310,
+      "name": "Quảng Phú Cầu",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772065,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772008,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772001,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772109,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.7793,
+        "longitude": 105.7851
+      },
+      "licenses": null,
+      "bounds": [
+        105.7851,
+        20.7793,
+        105.7851,
+        20.7793
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-12-07T13:00:00Z",
+        "local": "2024-12-07T20:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161311,
+      "name": "Sài Sơn",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772058,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7771975,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772049,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772076,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0167,
+        "longitude": 105.6478
+      },
+      "licenses": null,
+      "bounds": [
+        105.6478,
+        21.0167,
+        105.6478,
+        21.0167
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-23T22:00:00Z",
+        "local": "2024-01-24T05:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-02-05T08:00:00Z",
+        "local": "2025-02-05T15:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161312,
+      "name": "Sóc Sơn",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772011,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772044,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772089,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772037,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.2575,
+        "longitude": 105.8514
+      },
+      "licenses": null,
+      "bounds": [
+        105.8514,
+        21.2575,
+        105.8514,
+        21.2575
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T15:00:00Z",
+        "local": "2024-01-29T22:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-03-19T09:00:00Z",
+        "local": "2025-03-19T16:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161313,
+      "name": "Tân Mai",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772094,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772098,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772034,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772003,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.9883,
+        "longitude": 105.8549
+      },
+      "licenses": null,
+      "bounds": [
+        105.8549,
+        20.9883,
+        105.8549,
+        20.9883
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-03-01T04:00:00Z",
+        "local": "2024-03-01T11:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161314,
+      "name": "Tây Hồ Tây",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772054,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772066,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7771982,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7771972,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0563,
+        "longitude": 105.7974
+      },
+      "licenses": null,
+      "bounds": [
+        105.7974,
+        21.0563,
+        105.7974,
+        21.0563
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-03-22T09:00:00Z",
+        "local": "2024-03-22T16:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161315,
+      "name": "Tây Mỗ",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772072,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772002,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772009,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772004,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0058,
+        "longitude": 105.7485
+      },
+      "licenses": null,
+      "bounds": [
+        105.7485,
+        21.0058,
+        105.7485,
+        21.0058
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-02-07T00:00:00Z",
+        "local": "2024-02-07T07:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161316,
+      "name": "Thành Công",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772078,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772007,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772060,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772020,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0197,
+        "longitude": 105.8147
+      },
+      "licenses": null,
+      "bounds": [
+        105.8147,
+        21.0197,
+        105.8147,
+        21.0197
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-02-27T00:00:00Z",
+        "local": "2024-02-27T07:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161317,
+      "name": "Thanh Xuân - Sóc Sơn",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7771976,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772067,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772006,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772068,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.2287,
+        "longitude": 105.7583
+      },
+      "licenses": null,
+      "bounds": [
+        105.7583,
+        21.2287,
+        105.7583,
+        21.2287
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-09-09T17:00:00Z",
+        "local": "2024-09-10T00:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161318,
+      "name": "Tứ Liên",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772074,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772070,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7771994,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772036,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0639,
+        "longitude": 105.8338
+      },
+      "licenses": null,
+      "bounds": [
+        105.8338,
+        21.0639,
+        105.8338,
+        21.0639
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-03-22T04:00:00Z",
+        "local": "2024-03-22T11:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161319,
+      "name": "Vân Đình",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772061,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772057,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772075,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7771984,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.7339,
+        "longitude": 105.7703
+      },
+      "licenses": null,
+      "bounds": [
+        105.7703,
+        20.7339,
+        105.7703,
+        20.7339
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-02-05T04:00:00Z",
+        "local": "2025-02-05T11:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161320,
+      "name": "Vân Hà",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7772041,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7771986,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772035,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772059,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.1476,
+        "longitude": 105.9159
+      },
+      "licenses": null,
+      "bounds": [
+        105.9159,
+        21.1476,
+        105.9159,
+        21.1476
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T15:00:00Z",
+        "local": "2024-01-29T22:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-06-10T03:00:00Z",
+        "local": "2025-06-10T10:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161321,
+      "name": "Văn Quán",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7771990,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772028,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772062,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772099,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.972,
+        "longitude": 105.7856
+      },
+      "licenses": null,
+      "bounds": [
+        105.7856,
+        20.972,
+        105.7856,
+        20.972
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-04-05T00:00:00Z",
+        "local": "2024-04-05T07:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161322,
+      "name": "Võng La",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7771985,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7771989,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772071,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772079,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.1105,
+        "longitude": 105.7605
+      },
+      "licenses": null,
+      "bounds": [
+        105.7605,
+        21.1105,
+        105.7605,
+        21.1105
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-15T07:00:00Z",
+        "local": "2024-01-15T14:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2024-01-15T09:00:00Z",
+        "local": "2024-01-15T16:00:00+07:00"
+      }
+    },
+    {
+      "id": 2161323,
+      "name": "Xuân Mai",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 7771999,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 7772042,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 7772092,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 7772015,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.8994,
+        "longitude": 105.5773
+      },
+      "licenses": null,
+      "bounds": [
+        105.5773,
+        20.8994,
+        105.5773,
+        20.8994
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-01-29T06:00:00Z",
+        "local": "2024-01-29T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-03-17T01:00:00Z",
+        "local": "2025-03-17T08:00:00+07:00"
+      }
+    },
+    {
+      "id": 3276359,
+      "name": "CMT8",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 11256,
+        "name": "Thomas Versteeg"
+      },
+      "provider": {
+        "id": 66,
+        "name": "AirGradient"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 7,
+          "name": "Unknown AirGradient Sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 11357396,
+          "name": "pm1 µg/m³",
+          "parameter": {
+            "id": 19,
+            "name": "pm1",
+            "units": "µg/m³",
+            "displayName": "PM1"
+          }
+        },
+        {
+          "id": 11357395,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 11357424,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 11357398,
+          "name": "relativehumidity %",
+          "parameter": {
+            "id": 98,
+            "name": "relativehumidity",
+            "units": "%",
+            "displayName": "RH"
+          }
+        },
+        {
+          "id": 11357401,
+          "name": "temperature c",
+          "parameter": {
+            "id": 100,
+            "name": "temperature",
+            "units": "c",
+            "displayName": "Temperature (C)"
+          }
+        },
+        {
+          "id": 11357394,
+          "name": "um003 particles/cm³",
+          "parameter": {
+            "id": 125,
+            "name": "um003",
+            "units": "particles/cm³",
+            "displayName": "PM0.3 count"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.78533,
+        "longitude": 106.67029
+      },
+      "licenses": [
+        {
+          "id": 41,
+          "name": "CC BY 4.0",
+          "attribution": {
+            "name": "Thomas Versteeg",
+            "url": null
+          },
+          "dateFrom": "2023-07-15",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        106.67029,
+        10.78533,
+        106.67029,
+        10.78533
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2024-11-19T11:00:00Z",
+        "local": "2024-11-19T18:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-12-22T05:00:00Z",
+        "local": "2025-12-22T12:00:00+07:00"
+      }
+    },
+    {
+      "id": 4743591,
+      "name": "Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM, Cơ sở Linh Trung.",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 12,
+        "name": "AirGradient"
+      },
+      "provider": {
+        "id": 66,
+        "name": "AirGradient"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 7,
+          "name": "Unknown AirGradient Sensor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 13332025,
+          "name": "pm1 µg/m³",
+          "parameter": {
+            "id": 19,
+            "name": "pm1",
+            "units": "µg/m³",
+            "displayName": "PM1"
+          }
+        },
+        {
+          "id": 13332026,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 13332027,
+          "name": "relativehumidity %",
+          "parameter": {
+            "id": 98,
+            "name": "relativehumidity",
+            "units": "%",
+            "displayName": "RH"
+          }
+        },
+        {
+          "id": 13332028,
+          "name": "temperature c",
+          "parameter": {
+            "id": 100,
+            "name": "temperature",
+            "units": "c",
+            "displayName": "Temperature (C)"
+          }
+        },
+        {
+          "id": 13332029,
+          "name": "um003 particles/cm³",
+          "parameter": {
+            "id": 125,
+            "name": "um003",
+            "units": "particles/cm³",
+            "displayName": "PM0.3 count"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.876939,
+        "longitude": 106.797617
+      },
+      "licenses": [
+        {
+          "id": 41,
+          "name": "CC BY 4.0",
+          "attribution": {
+            "name": "AirGradient",
+            "url": null
+          },
+          "dateFrom": "2023-07-15",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        106.797617,
+        10.876939,
+        106.797617,
+        10.876939
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2025-06-15T05:00:00Z",
+        "local": "2025-06-15T12:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-06-15T08:00:00Z",
+        "local": "2025-06-15T15:00:00+07:00"
+      }
+    },
+    {
+      "id": 4946811,
+      "name": "556 Nguyễn Văn Cừ",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 13502158,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 13502159,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 13502160,
+          "name": "o3 µg/m³",
+          "parameter": {
+            "id": 3,
+            "name": "o3",
+            "units": "µg/m³",
+            "displayName": "O₃ mass"
+          }
+        },
+        {
+          "id": 13502165,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 13502150,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 13502161,
+          "name": "so2 µg/m³",
+          "parameter": {
+            "id": 6,
+            "name": "so2",
+            "units": "µg/m³",
+            "displayName": "SO₂ mass"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0491,
+        "longitude": 105.8831
+      },
+      "licenses": null,
+      "bounds": [
+        105.8831,
+        21.0491,
+        105.8831,
+        21.0491
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2025-07-03T15:40:00Z",
+        "local": "2025-07-03T22:40:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-12-22T06:05:00Z",
+        "local": "2025-12-22T13:05:00+07:00"
+      }
+    },
+    {
+      "id": 4946812,
+      "name": "Công viên hồ điều hòa Nhân Chính, Khuất Duy Tiến",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 13502163,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 13502162,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 13502148,
+          "name": "o3 µg/m³",
+          "parameter": {
+            "id": 3,
+            "name": "o3",
+            "units": "µg/m³",
+            "displayName": "O₃ mass"
+          }
+        },
+        {
+          "id": 13502153,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 13502151,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 13502157,
+          "name": "so2 µg/m³",
+          "parameter": {
+            "id": 6,
+            "name": "so2",
+            "units": "µg/m³",
+            "displayName": "SO₂ mass"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0031,
+        "longitude": 105.79470000000002
+      },
+      "licenses": null,
+      "bounds": [
+        105.79470000000002,
+        21.0031,
+        105.79470000000002,
+        21.0031
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2025-07-03T15:40:00Z",
+        "local": "2025-07-03T22:40:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-12-22T06:05:00Z",
+        "local": "2025-12-22T13:05:00+07:00"
+      }
+    },
+    {
+      "id": 4946813,
+      "name": "ĐH Bách Khoa - cổng Parabol đường Giải Phóng",
+      "locality": "Hanoi",
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 4,
+        "name": "Unknown Governmental Organization"
+      },
+      "provider": {
+        "id": 67,
+        "name": "Hanoi Air Quality Monitoring Network"
+      },
+      "isMobile": false,
+      "isMonitor": true,
+      "instruments": [
+        {
+          "id": 2,
+          "name": "Government Monitor"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 13502156,
+          "name": "co µg/m³",
+          "parameter": {
+            "id": 4,
+            "name": "co",
+            "units": "µg/m³",
+            "displayName": "CO mass"
+          }
+        },
+        {
+          "id": 13502155,
+          "name": "no2 µg/m³",
+          "parameter": {
+            "id": 5,
+            "name": "no2",
+            "units": "µg/m³",
+            "displayName": "NO₂ mass"
+          }
+        },
+        {
+          "id": 13502149,
+          "name": "o3 µg/m³",
+          "parameter": {
+            "id": 3,
+            "name": "o3",
+            "units": "µg/m³",
+            "displayName": "O₃ mass"
+          }
+        },
+        {
+          "id": 13502152,
+          "name": "pm10 µg/m³",
+          "parameter": {
+            "id": 1,
+            "name": "pm10",
+            "units": "µg/m³",
+            "displayName": "PM10"
+          }
+        },
+        {
+          "id": 13502154,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 13502164,
+          "name": "so2 µg/m³",
+          "parameter": {
+            "id": 6,
+            "name": "so2",
+            "units": "µg/m³",
+            "displayName": "SO₂ mass"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 21.0052,
+        "longitude": 105.84180000000002
+      },
+      "licenses": null,
+      "bounds": [
+        105.84180000000002,
+        21.0052,
+        105.84180000000002,
+        21.0052
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2025-07-03T15:40:00Z",
+        "local": "2025-07-03T22:40:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-12-22T06:05:00Z",
+        "local": "2025-12-22T13:05:00+07:00"
+      }
+    },
+    {
+      "id": 6068138,
+      "name": "Care Centre",
+      "locality": null,
+      "timezone": "Asia/Ho_Chi_Minh",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 12,
+        "name": "AirGradient"
+      },
+      "provider": {
+        "id": 66,
+        "name": "AirGradient"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 22,
+          "name": "AirGradient ONE Generation 9 (I-9PSL-DE)"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 14325345,
+          "name": "pm1 µg/m³",
+          "parameter": {
+            "id": 19,
+            "name": "pm1",
+            "units": "µg/m³",
+            "displayName": "PM1"
+          }
+        },
+        {
+          "id": 14325346,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 14325347,
+          "name": "relativehumidity %",
+          "parameter": {
+            "id": 98,
+            "name": "relativehumidity",
+            "units": "%",
+            "displayName": "RH"
+          }
+        },
+        {
+          "id": 14325348,
+          "name": "temperature c",
+          "parameter": {
+            "id": 100,
+            "name": "temperature",
+            "units": "c",
+            "displayName": "Temperature (C)"
+          }
+        },
+        {
+          "id": 14325349,
+          "name": "um003 particles/cm³",
+          "parameter": {
+            "id": 125,
+            "name": "um003",
+            "units": "particles/cm³",
+            "displayName": "PM0.3 count"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 10.774491,
+        "longitude": 106.661026
+      },
+      "licenses": [
+        {
+          "id": 41,
+          "name": "CC BY 4.0",
+          "attribution": {
+            "name": "AirGradient",
+            "url": null
+          },
+          "dateFrom": "2023-07-15",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        106.661026,
+        10.774491,
+        106.661026,
+        10.774491
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2025-10-09T01:00:00Z",
+        "local": "2025-10-09T08:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-12-08T02:00:00Z",
+        "local": "2025-12-08T09:00:00+07:00"
+      }
+    },
+    {
+      "id": 6123215,
+      "name": "OceanPark",
+      "locality": null,
+      "timezone": "Asia/Bangkok",
+      "country": {
+        "id": 56,
+        "code": "VN",
+        "name": "Vietnam"
+      },
+      "owner": {
+        "id": 12,
+        "name": "AirGradient"
+      },
+      "provider": {
+        "id": 66,
+        "name": "AirGradient"
+      },
+      "isMobile": false,
+      "isMonitor": false,
+      "instruments": [
+        {
+          "id": 24,
+          "name": "AirGradient Open Air Generation 1 (O-1PST)"
+        }
+      ],
+      "sensors": [
+        {
+          "id": 14581374,
+          "name": "pm1 µg/m³",
+          "parameter": {
+            "id": 19,
+            "name": "pm1",
+            "units": "µg/m³",
+            "displayName": "PM1"
+          }
+        },
+        {
+          "id": 14581375,
+          "name": "pm25 µg/m³",
+          "parameter": {
+            "id": 2,
+            "name": "pm25",
+            "units": "µg/m³",
+            "displayName": "PM2.5"
+          }
+        },
+        {
+          "id": 14581376,
+          "name": "relativehumidity %",
+          "parameter": {
+            "id": 98,
+            "name": "relativehumidity",
+            "units": "%",
+            "displayName": "RH"
+          }
+        },
+        {
+          "id": 14581377,
+          "name": "temperature c",
+          "parameter": {
+            "id": 100,
+            "name": "temperature",
+            "units": "c",
+            "displayName": "Temperature (C)"
+          }
+        },
+        {
+          "id": 14581378,
+          "name": "um003 particles/cm³",
+          "parameter": {
+            "id": 125,
+            "name": "um003",
+            "units": "particles/cm³",
+            "displayName": "PM0.3 count"
+          }
+        }
+      ],
+      "coordinates": {
+        "latitude": 20.9933,
+        "longitude": 105.9441
+      },
+      "licenses": [
+        {
+          "id": 41,
+          "name": "CC BY 4.0",
+          "attribution": {
+            "name": "AirGradient",
+            "url": null
+          },
+          "dateFrom": "2023-07-15",
+          "dateTo": null
+        }
+      ],
+      "bounds": [
+        105.9441,
+        20.9933,
+        105.9441,
+        20.9933
+      ],
+      "distance": null,
+      "datetimeFirst": {
+        "utc": "2025-11-08T06:00:00Z",
+        "local": "2025-11-08T13:00:00+07:00"
+      },
+      "datetimeLast": {
+        "utc": "2025-12-22T05:00:00Z",
+        "local": "2025-12-22T12:00:00+07:00"
+      }
+    }
+  ]
+}

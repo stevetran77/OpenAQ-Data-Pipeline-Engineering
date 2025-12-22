@@ -1,105 +1,236 @@
-### **File: `architecture.md**`
+Dưới đây là `architecture.md` đã cập nhật đúng kiến trúc mới của bạn (bucket `openaq-data-pipeline` với `aq_raw/`, `aq_dev/`, `aq_prod/`, pipeline tới Athena → OWOX → Looker Studio).[1][2]
 
 ```markdown
-# Architecture: OpenAQ Local Lakehouse
+# Architecture: OpenAQ v3 Data Pipeline
 
-## Executive Summary
-The OpenAQ Data Pipeline is a **Local Docker Lakehouse** that leverages the power of AWS Serverless services. Orchestration runs locally on **Docker Desktop** (Airflow LocalExecutor) to minimize costs and improve development velocity. Heavy data processing is offloaded to **AWS Glue ETL Jobs**, ensuring the local machine acts only as a trigger, not a compute node. Data is stored in **S3** and queried via **Amazon Athena**, creating a robust, zero-maintenance data platform.
+## 1. Mục tiêu hệ thống
 
-## Project Initialization
-To set up the environment:
-```bash
-# 1. Configure AWS CLI with IAM User credentials
-aws configure
+- Thu thập dữ liệu chất lượng không khí từ **OpenAQ API v3** cho Việt Nam.
+- Lưu trữ **raw JSON.gz immutable** trên S3 (zone `aq_raw/`).
+- Transform sang **Parquet partitioned** cho 2 môi trường: `aq_dev/` và `aq_prod/`.
+- Orchestrate pipeline bằng **Airflow (Docker local)**.
+- Phân tích dữ liệu qua **Athena → OWOX → Looker Studio**.
 
-# 2. Initialize local project structure
-mkdir -p dags/{raw,dev,prod} etls glue_jobs pipelines utils config sql/athena_views
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+---
+
+## 2. High-Level Architecture
+
+```
+               Airflow (Docker Local)
+         ─────────────────────────────────
+         DAG:
+           - openaq_to_athena_pipeline
+
+                 │
+                 ▼
+        AWS Lambda: openaq-fetcher
+        - Bước 1: /v3/locations (VN)
+        - Bước 2: /v3/locations/{location_id}/measurements
+        - Ghi raw JSON.gz vào S3 (aq_raw/)
+
+                 │
+                 ▼
+      S3 Bucket: openaq-data-pipeline
+      ├── aq_raw/    (raw zone: JSON.gz từ API)
+      ├── aq_dev/    (dev zone: Parquet, test ETL)
+      └── aq_prod/   (prod zone: Parquet, production)
+
+                 │
+                 ▼
+               AWS Glue
+      ├── Glue Jobs (dev/prod)
+      │   - Đọc từ aq_raw/
+      │   - Ghi Parquet vào aq_dev/ và aq_prod/
+      └── Glue Crawlers (raw/dev/prod)
+          - Cập nhật Glue Data Catalog
+
+                 │
+                 ▼
+         Glue Data Catalog
+      ├── raw_db   (tables mapping aq_raw/)
+      ├── dev_db   (tables mapping aq_dev/)
+      └── prod_db  (tables mapping aq_prod/)
+
+                 │
+                 ▼
+            Amazon Athena
+      ├── database: aq_dev
+      │   └── table: vietnam
+      └── database: aq_prod
+          └── table: vietnam
+
+                 │
+                 ▼
+                 OWOX
+      ├── source: aq_dev.vietnam
+      └── source: aq_prod.vietnam
+
+                 │
+                 ▼
+            Looker Studio
+      ├── dataset: aq_dev.vietnam
+      └── dataset: aq_prod.vietnam
+```
+
+---
+
+## 3. S3 Structure
+
+Bucket: `openaq-data-pipeline`.[web:15]
+
+```
+s3://openaq-data-pipeline/
+├── aq_raw/
+│
+├── aq_dev/
+│
+├── aq_prod/
 
 ```
 
-## Decision Summary
+- **aq_raw/**: immutable raw JSON từ OpenAQ v3 (gzip).
+- **aq_dev/**: zone dev để thử logic ETL, schema mới.
+- **aq_prod/**: zone prod ổn định cho báo cáo, dashboards.
 
-| Category | Decision | Version | Rationale |
-| --- | --- | --- | --- |
-| **Orchestration** | **Airflow (LocalExecutor)** | 2.7+ | Runs efficiently on local Docker. No need for Redis/Celery complexity. |
-| **Ingestion** | **Airflow PythonOperator** | - | Lightweight API extraction logic runs locally to fetch JSON. |
-| **Transformation** | **AWS Glue ETL (Spark/Python)** | 4.0 | **Offloads compute to AWS.** Handles massive datasets/backfills without crashing the local Docker container. |
-| **Catalog** | **AWS Glue Crawler** | - | Automates schema discovery for the Parquet files in S3. |
-| **Storage** | **AWS S3** | Standard | Cloud-native storage accessible by Glue, Athena, and OWOX. |
-| **Warehouse** | **Amazon Athena** | V3 | Serverless SQL engine for querying S3 data. Pay-per-query. |
-| **Data Layers** | **raw -> dev -> prod** | - | Strict lineage: Raw (JSON) -> Dev (Parquet) -> Prod (Views). |
+---
 
-## Data Architecture (S3 Zones)
+## 4. Luồng dữ liệu chi tiết
 
-| Zone | Path | Format | Engine | Description |
-| --- | --- | --- | --- | --- |
-| **Raw** | `s3://{bucket}/raw/` | JSON | Airflow | **Immutable Landing Zone.** Exact API response payload. Partitioned by date. |
-| **Dev** | `s3://{bucket}/dev/` | Parquet | **AWS Glue** | **Processed Zone.** Cleaned, deduplicated, and typed data. Compressed (Snappy). |
-| **Prod** | `s3://{bucket}/prod/` | SQL View | Athena | **Serving Zone.** Aggregated views (e.g., Daily Averages) for visualization. |
+### 4.1 Extract (Lambda + OpenAQ v3)
 
-## Data Flow Pipeline
+**Step 1 – Locations & sensors (VN)**  
+- `GET /v3/locations?iso=VN&limit=...&page=...` để lấy danh sách locations ở Việt Nam và sensors tương ứng.[web:98][web:95]  
 
-1. **Extract (Local):** Airflow triggers `extract_raw_data`. Fetches API data and uploads `.json` to `s3://.../raw/`.
-2. **Transform (Cloud):** Airflow triggers **Glue Job** `openaq_raw_to_dev`.
-* Reads JSON from `raw`.
-* Flattens coordinates and converts types.
-* Writes Parquet to `s3://.../dev/`.
+**Step 2 – Measurements per sensor**  
+- `GET /v3/sensors/{sensors id}/measurements?sensors_id=...&date_from=...&date_to=...&limit=...&page=...`.[web:93][web:95]  
+- Kết quả ghi vào:
+  - `s3://openaq-data-pipeline/aq_raw/
 
+Toàn bộ 2 step chạy trong **Lambda `openaq-fetcher`**, được trigger bởi Airflow DAG (bước đầu set schedule = None)
 
-3. **Catalog (Cloud):** Airflow triggers **Glue Crawler**. Updates Athena table definitions.
-4. **Validate (Cloud):** Airflow triggers Athena query to verify data quality in `dev`.
-5. **Serve (Cloud):** OWOX/Looker queries `openaq_prod` views which read from `dev` tables.
+---
 
-## Technology Stack Details
+## 5. AWS Glue
 
-### Core Technologies
+### 5.1 Glue Crawlers
 
-* **Orchestrator:** Apache Airflow (Docker Compose)
-* **ETL Engine:** AWS Glue (Serverless Spark/Python Shell)
-* **Query Engine:** Amazon Athena
-* **Language:** Python 3.10+ (Local), PySpark (Glue)
+3 crawlers chính:[web:84][web:85]
 
-### Integration Points
+2. **dev-crawler**
+   - Path: `s3://openaq-data-pipeline/aq_dev/marts`
+   - Target DB: `aq_dev`
 
-* **Airflow → AWS Glue:** Uses `boto3` to `start_job_run` and polls for completion.
-* **Airflow → S3:** Uploads raw JSON files.
-* **Glue → S3:** Reads JSON, writes Parquet.
+3. **prod-crawler**
+   - Path: `s3://openaq-data-pipeline/aq_prod/marts`
+   - Target DB: `aq_prod`
 
-## Implementation Patterns
+Nhiệm vụ:
+- Tự infer schema (cột, kiểu dữ liệu).
+- Nhận diện partitions (`measurement_date`, `country`) và cập nhật Glue Data Catalog.
 
-### 1. Naming & Consistency
+### 5.2 Glue Jobs (ETL)
 
-* **S3 Partitions:** Hive-style strictly enforced (`/year=YYYY/month=MM/day=DD/`).
-* **Glue Jobs:** Naming convention `job_{source}_{target}` (e.g., `job_raw_to_dev`).
-* **Regions:** Fixed to `ap-southeast-1`.
+1. **Job `openaq-transformer-dev`**
+   - Input: `raw_db.openaq_raw`.
+   - Bước:
+     - Flatten nested JSON:
+       - location, coordinates, sensor, parameter, value, date.utc.
+     - Chuẩn hóa:
+       - `measurement_date` (date), `country`, `location_name`, `parameter`, `value` (double).
+     - Lọc record không hợp lệ.
+     - Ghi Parquet:
+       - Path: `s3://openaq-data-pipeline/aq_dev/processed/openaq/`.
+       - Partition: `measurement_date`, `country`.[web:31]
 
-### 2. Security (Local Context)
+2. **Job `openaq-transformer-prod`**
+   - Tương tự dev, nhưng:
+     - Output: `s3://openaq-data-pipeline/aq_prod/processed/openaq/`.
 
-* **Credentials:** Injected via `.env` file to Docker.
-* **IAM User:** `openaq-local-dev` requires `glue:StartJobRun`, `glue:GetJobRun`, `s3:PutObject`, `s3:GetObject`.
+---
 
-## Architecture Decision Records (ADRs)
+## 6. Glue Data Catalog
 
-### ADR-001: Migration to Local Docker
+- **raw_db**:
+  - `openaq_raw`: map tới `aq_raw/openaq/`.
+- **dev_db**:
+  - bảng processed dev: map tới `aq_dev/processed/openaq/`.
+- **prod_db**:
+  - bảng processed prod: map tới `aq_prod/processed/openaq/`.[web:85]
 
-**Context:** EC2 Free Tier has RAM limits.
-**Decision:** Run Airflow locally.
-**Consequences:** Zero compute cost for orchestration.
+Các bảng được crawlers update tự động sau mỗi ETL.
 
-### ADR-003: Offloading Transformation to Glue
+---
 
-**Context:** Local Docker container may run out of memory when processing large historical backfills (e.g., 1 year of data).
-**Decision:** Use AWS Glue ETL Jobs for the Transformation step.
-**Consequences:**
+## 7. Athena, OWOX, Looker Studio
 
-* (+) Local machine stays responsive.
-* (+) Can scale to process terabytes of data if needed.
-* (-) Small cost associated with Glue DPU-hours (though within Free Tier limits for small runs).
-* (-) Slightly more complex deployment (need to sync scripts to S3).
+### 7.1 Athena
+
+- Workgroup **dev**:
+  - Result location: `s3://openaq-data-pipeline/aq_dev/query-results/` (có thể thêm prefix này sau).
+  - Database: `aq_dev` (map `dev_db` tables).[web:81]
+- Workgroup **prod**:
+  - Result location: `s3://openaq-data-pipeline/aq_prod/query-results/`.
+  - Database: `aq_prod`.
+
+Ví dụ query:
 
 ```
+SELECT
+  location_name,
+  measurement_date,
+  country,
+  AVG(value) AS avg_pm25
+FROM aq_prod.vietnam
+WHERE parameter = 'pm25'
+  AND measurement_date = DATE '2025-12-22'
+GROUP BY location_name, measurement_date, country
+ORDER BY avg_pm25 DESC
+LIMIT 10;
+```
+
+### 7.2 OWOX
+
+- Kết nối tới Athena hoặc S3 (tùy cách bạn cấu hình trong OWOX).
+- Nguồn dữ liệu chính:
+  - `aq_dev.vietnam`
+  - `aq_prod.vietnam`
+
+### 7.3 Looker Studio
+
+- Kết nối qua OWOX (hoặc trực tiếp Athena connector nếu dùng).
+- Dataset:
+  - Dev: `aq_dev.vietnam`
+  - Prod: `aq_prod.vietnam`
+- Dùng cho dashboard, báo cáo air quality theo thời gian / thành phố.
+
+---
+
+## 8. Airflow Orchestration
+
+Chạy Airflow bằng Docker local, DAG chính: `openaq_to_athena_pipeline`.
+
+**Flow DAG (mỗi ngày):**
 
 ```
+1) fetch_openaq_raw       -> LambdaInvoke (openaq-fetcher)
+2) run_glue_etl_dev       -> GlueJobOperator (openaq-transformer-dev)
+3) crawl_dev_processed    -> GlueCrawlerOperator (dev-crawler)
+4) run_glue_etl_prod      -> GlueJobOperator (openaq-transformer-prod)
+5) crawl_prod_processed   -> GlueCrawlerOperator (prod-crawler)
+```
+
+- Airflow chịu trách nhiệm:
+  - Scheduler (@daily).
+  - Dependencies, retry, logging.[web:14]
+
+---
+
+## 9. Dev vs Prod Strategy
+
+- Cùng dùng **raw** (`aq_raw/`) cho dev & prod – nguồn chân lý, immutable.
+- **Dev**:
+  - Thử nghiệm schema, logic ETL, partitioning trong `aq_dev/`.
+- **Prod**:
+  - Chạy ETL ổn định trong `aq_prod/`, là nguồn cho OWOX/Looker Studio.
+
+---

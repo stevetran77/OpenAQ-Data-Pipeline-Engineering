@@ -8,6 +8,7 @@ CONFIG_FILE = PROJECT_ROOT / "config" / "config.conf"
 
 # Initialize ConfigParser
 config = configparser.ConfigParser()
+BASE_URL = "https://api.openaq.org/v3"
 
 # Load configuration file
 if CONFIG_FILE.exists():
@@ -34,10 +35,6 @@ CURRENT_ENV_FOLDER = ENV_FOLDER_MAP.get(ENV, 'aq_dev')
 
 # Folder chứa dữ liệu thô (Input/Backup)
 RAW_FOLDER = 'aq_raw'
-
-print(f"[INFO] Pipeline running in environment: {ENV}")
-print(f"[INFO] Storage Paths -> Marts: {CURRENT_ENV_FOLDER} | Raw: {RAW_FOLDER}")
-
 
 # ============================================================================
 # DATABASE CONFIGURATION
@@ -105,19 +102,6 @@ ATHENA_DATABASE = GLUE_DATABASE_NAME
 _bucket = config.get("aws", "aws_bucket_name", fallback="")
 # Folder kết quả query: aq_dev/athena-results hoặc aq_prod/athena-results
 ATHENA_OUTPUT_LOCATION = f"s3://{_bucket}/{CURRENT_ENV_FOLDER}/athena-results/"
-
-
-# ============================================================================
-# AWS REDSHIFT CONFIGURATION
-# ============================================================================
-REDSHIFT_HOST = config.get("aws_redshift", "redshift_host", fallback="")
-REDSHIFT_PORT = config.getint("aws_redshift", "redshift_port", fallback=5439)
-REDSHIFT_DATABASE = config.get("aws_redshift", "redshift_database", fallback="openaq_warehouse")
-REDSHIFT_USERNAME = config.get("aws_redshift", "redshift_username", fallback="")
-REDSHIFT_PASSWORD = config.get("aws_redshift", "redshift_password", fallback="")
-REDSHIFT_SCHEMA = config.get("aws_redshift", "redshift_schema", fallback="public")
-REDSHIFT_IAM_ROLE = config.get("aws_redshift", "redshift_iam_role", fallback="")
-
 
 # ============================================================================
 # ETL SETTINGS
