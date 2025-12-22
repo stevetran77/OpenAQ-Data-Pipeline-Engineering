@@ -13,3 +13,17 @@ logs/
 airflow.env
 
 .serena/
+
+# Lambda build artifacts
+lambda_functions/**/layer/
+lambda_functions/**/.aws-sam/
+lambda_functions/**/samconfig.toml
+lambda_functions/**/response.json
+lambda_functions/**/env.json
+lambda_functions/**/*.py
+!lambda_functions/**/handler.py
+lambda_functions/**/extract_location.py
+lambda_functions/**/extract_sensor_measurement.py
+lambda_functions/**/openaq_etl.py
+lambda_functions/**/constants.py
+lambda_functions/openaq_fetcher/deployment/
