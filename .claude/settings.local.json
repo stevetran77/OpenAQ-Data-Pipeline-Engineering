@@ -12,7 +12,9 @@
       "mcp__serena__insert_after_symbol",
       "mcp__serena__find_symbol",
       "Bash(ls:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "mcp__serena__read_memory",
+      "Bash(git log:*)"
     ]
   }
 }
