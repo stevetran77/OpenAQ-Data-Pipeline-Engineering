@@ -17,12 +17,13 @@ from utils.constants import (
     GLUE_NUM_WORKERS,
 )
 
-# Import new refactored extraction functions
-from etls.extract_location import extract_location
-from etls.extract_sensor_measurement import extract_sensor_measurement
-
+# Import refactored extraction functions from openaq_etl
 from etls.openaq_etl import (
     connect_openaq,
+    fetch_all_vietnam_locations,
+    filter_active_sensors,
+    extract_measurements,
+    transform_measurements,
     enrich_measurements_with_metadata
 )
 
@@ -71,40 +72,45 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
 
     try:
         # STEP 1: Connect to OpenAQ (Get Headers)
-        print("[1/5] Preparing OpenAQ API Headers...")
+        print("[1/6] Preparing OpenAQ API Headers...")
         headers = connect_openaq(api_key=OPENAQ_API_KEY)
         print("[OK] Headers prepared")
 
-        # STEP 2: Extract locations and get sensor IDs
-        print("[2/5] Extracting locations and sensor IDs...")
-        sensor_ids, location_objs = extract_location(
-            headers=headers,
-            vietnam_wide=vietnam_wide,
+        # STEP 2: Fetch all Vietnam locations with pagination
+        print("[2/6] Fetching all Vietnam locations with sensors...")
+        sensor_ids, location_objs = fetch_all_vietnam_locations(headers)
+
+        location_count = len(location_objs)
+        initial_sensor_count = len(sensor_ids)
+        print(f"[OK] Found {location_count} locations with {initial_sensor_count} sensors")
+
+        # STEP 3: Filter active sensors (recent data + required parameters)
+        print("[3/6] Filtering active sensors...")
+        active_sensor_ids = filter_active_sensors(
+            location_objs,
             lookback_days=7,
             required_parameters=['PM2.5', 'PM10']
         )
-        
-        location_count = len(location_objs)
-        sensor_count = len(sensor_ids)
-        
-        if sensor_count == 0:
-            print("[WARNING] No sensors found. Pipeline stopping.")
+
+        active_sensor_count = len(active_sensor_ids)
+        if active_sensor_count == 0:
+            print("[WARNING] No active sensors found. Pipeline stopping.")
             return {
                 'status': 'WARNING',
                 'location_count': location_count,
                 'record_count': 0,
                 'raw_s3_path': None
             }
-        
-        print(f"[OK] Found {location_count} locations with {sensor_count} sensors")
 
-        # STEP 3: Extract measurements from API
-        print(f"[3/5] Extracting measurements from sensor API...")
+        print(f"[OK] Found {active_sensor_count} active sensors (from {initial_sensor_count} total)")
+
+        # STEP 4: Extract measurements from active sensors
+        print("[4/6] Extracting measurements from sensors...")
         date_to = datetime.now()
         date_from = date_to - timedelta(hours=lookback_hours)
 
-        measurements = extract_sensor_measurement(headers, sensor_ids, date_from, date_to)
-        
+        measurements = extract_measurements(headers, active_sensor_ids, date_from, date_to)
+
         if len(measurements) == 0:
             print("[WARNING] No measurements extracted. Pipeline stopping.")
             return {
@@ -113,17 +119,21 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
                 'record_count': 0,
                 'raw_s3_path': None
             }
-        
+
         print(f"[OK] Extracted {len(measurements)} measurements")
 
-        # STEP 4: Enrich measurements with location metadata (city, coordinates)
-        print(f"[4/5] Enriching measurements with location metadata...")
-        df_raw = pd.DataFrame(measurements)
-        df_enriched = enrich_measurements_with_metadata(df_raw, location_objs)
+        # STEP 5: Transform measurements into structured DataFrame
+        print("[5/6] Transforming measurements...")
+        df = transform_measurements(measurements)
+        print(f"[OK] Transformed {len(df)} records")
+
+        # STEP 6: Enrich with location metadata (city, coordinates, timezone, etc)
+        print("[6/6] Enriching measurements with location metadata...")
+        df_enriched = enrich_measurements_with_metadata(df, location_objs)
         print(f"[OK] Enriched {len(df_enriched)} records with location metadata")
 
-        # STEP 5: Archive raw data to S3 (JSON format for Glue to process)
-        print(f"[5/5] Archiving raw data to S3...")
+        # STEP 7: Archive raw data to S3 (JSON format for Glue to process)
+        print("[7/7] Archiving raw data to S3...")
         now = datetime.now()
 
         # Structure: aq_raw/year/month/day/hour/raw_measurements.json
@@ -140,9 +150,10 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
         }
 
         print(f"[SUCCESS] Extraction complete:")
-        print(f"  - Locations: {result['location_count']}")
-        print(f"  - Sensors: {sensor_count}")
-        print(f"  - Records: {result['record_count']}")
+        print(f"  - Total Locations: {location_count}")
+        print(f"  - Total Sensors: {initial_sensor_count}")
+        print(f"  - Active Sensors: {active_sensor_count}")
+        print(f"  - Records Extracted: {result['record_count']}")
         print(f"  - Raw data: {result['raw_s3_path']}")
 
         return result
