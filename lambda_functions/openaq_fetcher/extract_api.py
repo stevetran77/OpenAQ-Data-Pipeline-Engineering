@@ -1,10 +1,18 @@
-import requests
-import pandas as pd
-from datetime import datetime, timedelta
-from utils.constants import OPENAQ_API_KEY
+"""
+OpenAQ API extraction module for Lambda function.
 
-# Cấu hình API v3
+Optimized version of etls/openaq_etl.py for AWS Lambda:
+- No pandas dependency (reduces package size to ~8MB vs 100MB)
+- Direct dict/list operations for measurements
+- Minimal dependencies: requests, python-dateutil only
+"""
+
+import requests
+from datetime import datetime, timedelta
+
+
 BASE_URL = "https://api.openaq.org/v3"
+
 
 # ============================================================================
 # STEP 1: Authentication
@@ -140,8 +148,10 @@ def filter_active_sensors(locations: list, lookback_days: int = 7,
                 continue
 
             try:
-                last_datetime = pd.to_datetime(last_dt_str).replace(tzinfo=None)
-            except:
+                # Parse datetime string: "2024-01-15T10:30:00+00:00"
+                last_datetime = datetime.fromisoformat(last_dt_str.replace('Z', '+00:00'))
+                last_datetime = last_datetime.replace(tzinfo=None)
+            except Exception:
                 continue
 
             # Skip if last update is older than cutoff
@@ -252,76 +262,86 @@ def extract_measurements(headers: dict, sensor_ids: list,
 
 
 # ============================================================================
-# STEP 5: Transform Measurements
+# STEP 5: Transform Measurements (simplified - no pandas)
 # ============================================================================
 
-def transform_measurements(measurements: list) -> pd.DataFrame:
+def transform_measurements(measurements: list) -> list:
     """
-    Transform raw measurements into structured DataFrame.
+    Transform raw measurements into standardized format.
 
-    Converts list of measurement dicts into a pandas DataFrame with:
-    - Long format: Each row = one measurement at one time
-    - Columns: sensor_id, datetime, value, parameter, unit, extracted_at
-    - Sorted by sensor_id and datetime
+    Converts list of measurement dicts into enriched list with:
+    - Proper datetime parsing
+    - Extracted_at timestamp
     - Ready for enrichment with location metadata
 
     Args:
         measurements: List of measurement dicts from extract_measurements()
 
     Returns:
-        pd.DataFrame: Structured measurements in long format
+        list: Transformed measurement dicts with extracted_at field
 
     Note:
-        Rows with invalid datetime are automatically dropped.
+        Records with invalid datetime are filtered out.
     """
     if not measurements:
         print("[WARNING] No measurements to transform")
-        return pd.DataFrame()
+        return []
 
-    df = pd.DataFrame(measurements)
+    transformed = []
+    now = datetime.utcnow().isoformat()
 
-    # Ensure datetime is properly formatted
-    df['datetime'] = pd.to_datetime(df['datetime'], errors='coerce')
-    df['extracted_at'] = datetime.now()
+    for m in measurements:
+        try:
+            # Validate datetime
+            datetime_val = m.get('datetime')
+            if not datetime_val:
+                continue
 
-    # Remove rows with invalid datetime
-    df = df.dropna(subset=['datetime'])
+            # Basic ISO format validation (should be string like "2024-01-15T10:30:00Z")
+            if not isinstance(datetime_val, str):
+                continue
 
-    # Sort by sensor and datetime
-    df = df.sort_values(['sensor_id', 'datetime']).reset_index(drop=True)
+            record = {
+                'sensor_id': m.get('sensor_id'),
+                'datetime': datetime_val,
+                'value': m.get('value'),
+                'parameter': m.get('parameter'),
+                'unit': m.get('unit'),
+                'extracted_at': now
+            }
+            transformed.append(record)
+        except Exception:
+            continue
 
-    print(f"[SUCCESS] Transformed {len(df)} measurement records")
-    return df
+    print(f"[SUCCESS] Transformed {len(transformed)} measurement records")
+    return transformed
 
 
 # ============================================================================
 # STEP 6: Enrich with Metadata
 # ============================================================================
 
-def enrich_measurements_with_metadata(df: pd.DataFrame, locations: list) -> pd.DataFrame:
+def enrich_measurements_with_metadata(measurements: list, locations: list) -> list:
     """
-    Enrich measurement DataFrame with location metadata (coordinates, city, etc).
+    Enrich measurement dicts with location metadata (coordinates, city, etc).
 
     Joins measurement data with location information by mapping sensor_id
     to location details (coordinates, city name, country code, timezone).
 
     Args:
-        df: DataFrame from transform_measurements() with sensor_id column
+        measurements: List of measurement dicts from transform_measurements()
         locations: List of location objects from fetch_all_vietnam_locations()
 
     Returns:
-        pd.DataFrame: Enriched with columns:
-                      - location_id, location_name
-                      - city, timezone, country
-                      - latitude, longitude
+        list: Enriched measurement dicts with location fields
 
     Raises:
         Exception: If enrichment fails
     """
     try:
-        if df.empty:
-            print("[WARNING] Empty DataFrame, cannot enrich")
-            return df
+        if not measurements:
+            print("[WARNING] Empty measurements list, cannot enrich")
+            return []
 
         # Build sensor_id -> location metadata mapping
         sensor_to_location = {}
@@ -353,16 +373,25 @@ def enrich_measurements_with_metadata(df: pd.DataFrame, locations: list) -> pd.D
                     }
 
         # Enrich each measurement with location metadata
-        df['location_id'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('location_id'))
-        df['location_name'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('location_name'))
-        df['city'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('city') or 'Unknown')
-        df['timezone'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('timezone'))
-        df['country'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('country_code') or 'VN')
-        df['latitude'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('latitude'))
-        df['longitude'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('longitude'))
+        enriched = []
+        for m in measurements:
+            sensor_id = m.get('sensor_id')
+            location_meta = sensor_to_location.get(sensor_id, {})
 
-        print(f"[SUCCESS] Enriched {len(df)} records with location metadata")
-        return df
+            enriched_record = {
+                **m,  # Include all original fields
+                'location_id': location_meta.get('location_id'),
+                'location_name': location_meta.get('location_name'),
+                'city': location_meta.get('city') or 'Unknown',
+                'timezone': location_meta.get('timezone'),
+                'country': location_meta.get('country_code') or 'VN',
+                'latitude': location_meta.get('latitude'),
+                'longitude': location_meta.get('longitude')
+            }
+            enriched.append(enriched_record)
+
+        print(f"[SUCCESS] Enriched {len(enriched)} records with location metadata")
+        return enriched
 
     except Exception as e:
         print(f"[FAIL] Failed to enrich measurements: {str(e)}")

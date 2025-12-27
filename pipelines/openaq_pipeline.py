@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import pandas as pd
+import json
 
 # Import các biến môi trường và folder từ constants
 from utils.constants import (
@@ -17,17 +18,18 @@ from utils.constants import (
     GLUE_NUM_WORKERS,
 )
 
+# Import refactored extraction functions from openaq_etl
 from etls.openaq_etl import (
     connect_openaq,
-    extract_locations,
-    extract_measurements,
     fetch_all_vietnam_locations,
-    filter_active_locations,
+    filter_active_sensors,
+    extract_measurements,
+    transform_measurements,
     enrich_measurements_with_metadata
 )
 
 # Import S3 upload functions
-from utils.aws_utils import upload_to_s3
+from utils.aws_utils import upload_to_s3, get_s3_client
 
 # Import Glue job utilities for triggering transform job
 from utils.glue_utils import start_glue_job
@@ -38,23 +40,25 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
     """
     Main OpenAQ Extraction Pipeline (Simplified for Spark processing)
 
-    This pipeline now ONLY handles:
-    1. Extract measurements from OpenAQ API
-    2. Upload raw JSON to S3
+    This pipeline ONLY handles:
+    1. Extract locations and sensor IDs (from mock JSON or live API)
+    2. Extract measurements for those sensor IDs
+    3. Enrich with metadata
+    4. Upload raw JSON to S3
 
-    Transformation (pivot, dedup, enrich) is now handled by AWS Glue PySpark job.
+    Transformation (pivot, dedup, etc.) is now handled by AWS Glue PySpark job.
     Glue job is triggered separately in Airflow DAG.
 
     Args:
         file_name: Unique filename for raw data archive
-        city: Target city (ignored if vietnam_wide=True)
-        country: Target country (ignored if vietnam_wide=True)
+        city: Target city (currently not used - reserved for future)
+        country: Target country (currently not used - reserved for future)
         lookback_hours: Hours of historical data to extract
-        vietnam_wide: If True, extract all Vietnam locations; if False, extract single city
+        vietnam_wide: If True, extract all Vietnam locations (currently required)
         **kwargs: Additional Airflow context (ti, task_instance, etc.)
 
     Returns:
-        dict: Metadata about extracted data (location_count, record_count, raw_s3_path)
+        dict: Metadata about extracted data (status, location_count, record_count, raw_s3_path)
     """
     # Use defaults from config if not provided
     city = city or OPENAQ_TARGET_CITY
@@ -69,91 +73,106 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
 
     try:
         # STEP 1: Connect to OpenAQ (Get Headers)
-        print("[1/4] Preparing OpenAQ API Headers...")
+        print("[1/6] Preparing OpenAQ API Headers...")
         headers = connect_openaq(api_key=OPENAQ_API_KEY)
         print("[OK] Headers prepared")
 
-        # STEP 2: Get monitoring locations
-        if vietnam_wide:
-            print("[2/4] Fetching ALL Vietnam locations...")
-            all_locations = fetch_all_vietnam_locations(headers)
+        # STEP 2: Fetch all Vietnam locations with pagination
+        print("[2/6] Fetching all Vietnam locations with sensors...")
+        sensor_ids, location_objs = fetch_all_vietnam_locations(headers)
 
-            # Filter active locations
-            location_objs = filter_active_locations(
-                all_locations,
-                lookback_days=7,
-                required_parameters=['PM2.5', 'PM10']
-            )
+        location_count = len(location_objs)
+        initial_sensor_count = len(sensor_ids)
+        print(f"[OK] Found {location_count} locations with {initial_sensor_count} sensors")
 
-            # Extract list of location IDs
-            location_ids = [loc['id'] for loc in location_objs]
-            print(f"[OK] Found {len(location_ids)} active monitoring locations")
-        else:
-            print(f"[2/4] Fetching locations for {city}...")
-            # For single city mode, we also need location objects for metadata enrichment
-            # First, get location IDs
-            location_ids = extract_locations(headers, city, country)
+        # STEP 3: Filter active sensors (recent data + required parameters)
+        print("[3/6] Filtering active sensors...")
+        active_sensor_ids = filter_active_sensors(
+            location_objs,
+            lookback_days=7,
+            required_parameters=['PM2.5', 'PM10']
+        )
 
-            # Then fetch full location details for enrichment
-            # We'll fetch all Vietnam locations and filter by IDs
-            # (This is a workaround since extract_locations only returns IDs)
-            all_locations = fetch_all_vietnam_locations(headers)
-            location_objs = [loc for loc in all_locations if loc['id'] in location_ids]
-
-            print(f"[OK] Found {len(location_ids)} monitoring locations")
-
-        if len(location_ids) == 0:
-            print("[WARNING] No locations found. Pipeline stopping.")
+        active_sensor_count = len(active_sensor_ids)
+        if active_sensor_count == 0:
+            print("[WARNING] No active sensors found. Pipeline stopping.")
             return {
                 'status': 'WARNING',
-                'location_count': 0,
+                'location_count': location_count,
                 'record_count': 0,
                 'raw_s3_path': None
             }
 
-        # STEP 3: Extract measurements from API
-        print(f"[3/4] Extracting measurements...")
+        print(f"[OK] Found {active_sensor_count} active sensors (from {initial_sensor_count} total)")
+
+        # STEP 4: Extract measurements from active sensors
+        print("[4/6] Extracting measurements from sensors...")
         date_to = datetime.now()
         date_from = date_to - timedelta(hours=lookback_hours)
 
-        measurements = extract_measurements(headers, location_ids, date_from, date_to)
-        print(f"[OK] Extracted {len(measurements)} measurements")
+        measurements = extract_measurements(headers, active_sensor_ids, date_from, date_to)
 
         if len(measurements) == 0:
             print("[WARNING] No measurements extracted. Pipeline stopping.")
             return {
                 'status': 'WARNING',
-                'location_count': len(location_ids),
+                'location_count': location_count,
                 'record_count': 0,
                 'raw_s3_path': None
             }
 
-        # STEP 3.5: Enrich measurements with location metadata (city, coordinates)
-        print(f"[3.5/4] Enriching measurements with metadata...")
-        df_raw = pd.DataFrame(measurements)
-        df_enriched = enrich_measurements_with_metadata(df_raw, location_objs)
+        print(f"[OK] Extracted {len(measurements)} measurements")
+
+        # STEP 5: Transform measurements into structured DataFrame
+        print("[5/6] Transforming measurements...")
+        df = transform_measurements(measurements)
+        print(f"[OK] Transformed {len(df)} records")
+
+        # STEP 6: Enrich with location metadata (city, coordinates, timezone, etc)
+        print("[6/6] Enriching measurements with location metadata...")
+        df_enriched = enrich_measurements_with_metadata(df, location_objs)
         print(f"[OK] Enriched {len(df_enriched)} records with location metadata")
 
-        # STEP 4: Archive raw data to S3 (JSON format for Glue to process)
-        print(f"[4/4] Archiving raw data to S3...")
+        # STEP 7: Archive raw data to S3 (JSON format for Glue to process)
+        print("[7/7] Archiving raw data to S3...")
         now = datetime.now()
 
         # Structure: aq_raw/year/month/day/hour/raw_measurements.json
         raw_key = f"{RAW_FOLDER}/{now.year}/{now.strftime('%m')}/{now.strftime('%d')}/{now.strftime('%H')}/raw_{file_name}.json"
 
-        # Upload enriched DataFrame to S3
-        upload_to_s3(df_enriched, AWS_BUCKET_NAME, raw_key, format='json')
+        # Wrap data in API response format (like data/ folder structure)
+        wrapped_data = {
+            'meta': {
+                'name': 'openaq-api',
+                'website': 'https://api.openaq.org/v3',
+                'found': len(df_enriched),
+                'extracted_at': now.isoformat()
+            },
+            'results': df_enriched.to_dict(orient='records')
+        }
+
+        # Upload wrapped data to S3 as single JSON (not NDJSON)
+        s3_client = get_s3_client()
+        s3_client.put_object(
+            Bucket=AWS_BUCKET_NAME,
+            Key=raw_key,
+            Body=json.dumps(wrapped_data, default=str),
+            ContentType='application/json'
+        )
+        print(f"[SUCCESS] Uploaded {len(df_enriched)} records to s3://{AWS_BUCKET_NAME}/{raw_key}")
 
         result = {
             'status': 'SUCCESS',
-            'location_count': len(location_ids),
+            'location_count': location_count,
             'record_count': len(measurements),
             'raw_s3_path': f"s3://{AWS_BUCKET_NAME}/{raw_key}"
         }
 
         print(f"[SUCCESS] Extraction complete:")
-        print(f"  - Locations: {result['location_count']}")
-        print(f"  - Records: {result['record_count']}")
+        print(f"  - Total Locations: {location_count}")
+        print(f"  - Total Sensors: {initial_sensor_count}")
+        print(f"  - Active Sensors: {active_sensor_count}")
+        print(f"  - Records Extracted: {result['record_count']}")
         print(f"  - Raw data: {result['raw_s3_path']}")
 
         return result
