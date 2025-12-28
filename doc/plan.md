@@ -210,7 +210,8 @@ aws athena start-query-execution --query-string "SELECT 1;" --query-execution-co
 
 **Test extraction task:**
 ```bash
-airflow tasks test openaq_to_athena_pipeline extract_all_vietnam_locations 2024-12-28
+docker-compose exec airflow-webserver airflow tasks test openaq_to_athena_pipeline lambda_extract_vietnam 2024-12-28
+
 ```
 
 **Expected output:**
@@ -219,72 +220,85 @@ airflow tasks test openaq_to_athena_pipeline extract_all_vietnam_locations 2024-
 [INFO] Connecting to OpenAQ API...
 [OK] Connected to OpenAQ API
 [INFO] Extracting locations...
-[INFO] Found X locations in Vietnam
+[INFO] Found 53 locations in Vietnam
 [INFO] Extracting measurements...
-[OK] Extracted X records
+[OK] Extracted 312 records
 [INFO] Uploading to S3...
-[OK] Uploaded to s3://openaq-data-pipeline/airquality/...
+[OK] Uploaded to s3://openaq-data-pipeline/aq_raw_test/2025/12/28/...
 [SUCCESS] Extraction completed successfully
 ```
 
 **Check S3 for files:**
 ```bash
-aws s3 ls s3://openaq-data-pipeline/airquality/ --recursive | tail -20
+aws s3 ls s3://openaq-data-pipeline/aq_raw_test/ --recursive | tail -20
 ```
 
-**Expected structure:**
+**Expected structure (Dev Environment):**
 ```
-airquality/hanoi/year=2024/month=12/day=28/
-airquality/hcmc/year=2024/month=12/day=28/
+aq_raw_test/2025/12/25/13/raw_vietnam_national_test.json
+aq_raw_test/2025/12/27/12/raw_vietnam_national_test.json
+aq_raw_test/2025/12/28/06/raw_vietnam_national_20251228T061747.json
 ```
+
+**Note:** Data is stored in `aq_raw_test/` folder (dev environment) with structure: `year/month/day/hour/raw_vietnam_national_{timestamp}.json`
 
 **Success Criteria:**
 - ✅ Task completes without errors
-- ✅ Output shows extraction metrics
-- ✅ Parquet files created in S3
-- ✅ Files are in correct partition structure
+- ✅ Output shows extraction metrics (locations + records count)
+- ✅ JSON files created in S3 under aq_raw_test/
+- ✅ Files are in correct partition structure (year/month/day/hour/)
+- ✅ File format is JSON (not Parquet) with meta + results wrapper
 
 ---
 
 ### Sub-task 2.2: Validate Extracted Data (30 min)
 
-**Objective:** Verify data quality and format
+**Objective:** Verify raw JSON data quality and format
 
 **Download sample file:**
 ```bash
-aws s3 cp s3://openaq-data-pipeline/airquality/hanoi/year=2024/month=12/day=28/part-00000.parquet ./sample.parquet
+aws s3 cp s3://openaq-data-pipeline/aq_raw_test/2025/12/28/06/raw_vietnam_national_20251228T061747.json ./sample_raw.json
 ```
 
-**Inspect Parquet schema:**
+**Inspect JSON structure:**
 ```bash
 python3 << 'EOF'
-import pyarrow.parquet as pq
+import json
 
-table = pq.read_table('sample.parquet')
-print("[INFO] Schema:")
-print(table.schema)
-print(f"\n[INFO] Total rows: {table.num_rows}")
-print(f"[INFO] Columns: {table.column_names}")
+with open('sample_raw.json', 'r') as f:
+    data = json.load(f)
 
-df = table.to_pandas()
-print(f"\n[INFO] Sample data (first 3 rows):")
-print(df.head(3))
+print("[INFO] JSON Structure:")
+print(f"  - Root keys: {list(data.keys())}")
 
-# Verify expected columns
-expected_cols = ['location_id', 'datetime', 'pm25', 'pm10', 'city_name', 'country_code', 'latitude', 'longitude']
-missing = [col for col in expected_cols if col not in table.column_names]
-if missing:
-    print(f"\n[WARNING] Missing columns: {missing}")
-else:
-    print(f"\n[OK] All expected columns present")
+if 'meta' in data:
+    meta = data['meta']
+    print(f"\n[INFO] Metadata:")
+    print(f"  - Name: {meta.get('name')}")
+    print(f"  - Website: {meta.get('website')}")
+    print(f"  - Records found: {meta.get('found')}")
+    print(f"  - Extracted at: {meta.get('extracted_at')}")
+
+if 'results' in data:
+    results = data['results']
+    print(f"\n[INFO] Results:")
+    print(f"  - Total records: {len(results)}")
+    if len(results) > 0:
+        print(f"  - Sample record (first):")
+        sample = results[0]
+        for key, value in list(sample.items())[:5]:
+            print(f"    - {key}: {value}")
+
+print(f"\n[OK] Raw JSON structure is valid")
 EOF
 ```
 
 **Success Criteria:**
-- ✅ Parquet file is valid
-- ✅ All expected columns present
-- ✅ Sample data looks correct
-- ✅ No obvious data quality issues
+- ✅ JSON file is valid and readable
+- ✅ Contains meta and results keys
+- ✅ Meta has name, website, found count, and extracted_at timestamp
+- ✅ Results array contains measurement records
+- ✅ Sample record has location_id, parameter, value, datetime fields
 
 ---
 
@@ -292,34 +306,36 @@ EOF
 
 **Objective:** Verify extraction result data is passed correctly
 
-**List XCom values:**
+**List XCom values (via Airflow UI):**
+1. Navigate to http://localhost:8080
+2. Click **DAGs** → `openaq_to_athena_pipeline`
+3. Click the DAG run (completed or running)
+4. Click **extract_all_vietnam_locations** task
+5. Go to **XCom** tab
+
+**Or via CLI (if task was run via scheduler):**
 ```bash
-airflow tasks xcom-list openaq_to_athena_pipeline extract_all_vietnam_locations 2024-12-28
+docker exec airflow-webserver airflow tasks xcom-get openaq_to_athena_pipeline extract_all_vietnam_locations return_value 2024-12-28
 ```
 
-**Check XCom value:**
-```bash
-airflow tasks xcom-get openaq_to_athena_pipeline extract_all_vietnam_locations return_value 2024-12-28
-```
-
-**Expected output structure:**
+**Expected XCom output structure:**
 ```json
 {
   "status": "SUCCESS",
   "location_count": 53,
-  "record_count": 1520,
+  "record_count": 312,
   "files_uploaded": [
-    "s3://openaq-data-pipeline/airquality/hanoi/...",
-    "s3://openaq-data-pipeline/airquality/hcmc/..."
+    "s3://openaq-data-pipeline/aq_raw_test/2025/12/28/06/raw_vietnam_national_20251228T061747.json"
   ]
 }
 ```
 
 **Success Criteria:**
-- ✅ XCom contains return value
+- ✅ XCom contains return value with status
 - ✅ Status is SUCCESS
-- ✅ Record count > 0
-- ✅ Files uploaded paths are correct
+- ✅ location_count = 53 (Vietnam locations)
+- ✅ record_count > 0 (measurement records)
+- ✅ files_uploaded contains correct S3 path to aq_raw_test/
 
 ---
 

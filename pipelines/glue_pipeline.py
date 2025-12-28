@@ -132,13 +132,47 @@ def trigger_glue_transform_job(job_name: str = None, **context) -> str:
 
     ti = context['ti']
 
-    # Pull extraction result from upstream task
+    # Pull extraction result from upstream Lambda task
     try:
+        import json
+
+        # Lambda task stores response in 'return_value' key
         extraction_result = ti.xcom_pull(
-            task_ids='extract_all_vietnam_locations',
+            task_ids='lambda_extract_vietnam',
             key='return_value'
         )
-    except:
+
+        print(f"[DEBUG] Raw XCom data type: {type(extraction_result)}")
+        print(f"[DEBUG] Raw XCom data: {str(extraction_result)[:500]}")  # First 500 chars
+
+        # Parse the Lambda response - handle multiple possible formats
+        if extraction_result:
+            # Case 1: If it's already a string, try to parse it as JSON
+            if isinstance(extraction_result, str):
+                extraction_result = json.loads(extraction_result)
+
+            # Case 2: If it's a dict, check if it's a Lambda response wrapper
+            if isinstance(extraction_result, dict):
+                # Lambda response wrapper with Payload
+                if 'Payload' in extraction_result:
+                    payload_str = extraction_result['Payload'].read().decode('utf-8')
+                    extraction_result = json.loads(payload_str)
+
+                # Lambda HTTP response with statusCode and body
+                if 'statusCode' in extraction_result:
+                    body = extraction_result.get('body')
+                    if isinstance(body, str):
+                        extraction_result = json.loads(body)
+                    elif isinstance(body, dict):
+                        extraction_result = body
+
+        print(f"[DEBUG] Parsed extraction_result type: {type(extraction_result)}")
+        print(f"[DEBUG] Parsed extraction_result keys: {extraction_result.keys() if isinstance(extraction_result, dict) else 'N/A'}")
+
+    except Exception as e:
+        print(f"[WARNING] Failed to pull extraction result: {e}")
+        import traceback
+        print(f"[DEBUG] Traceback: {traceback.format_exc()}")
         extraction_result = None
 
     if not extraction_result:

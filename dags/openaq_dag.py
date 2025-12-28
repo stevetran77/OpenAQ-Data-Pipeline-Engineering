@@ -3,12 +3,11 @@ sys.path.insert(0, '/opt/airflow/')
 
 from airflow import DAG
 from datetime import datetime, timedelta
-from airflow.operators.python import PythonOperator
 
 from tasks.catalog_tasks import create_catalog_tasks
 from tasks.validation_tasks import create_validate_athena_task
 from tasks.glue_transform_tasks import create_glue_transform_tasks
-from pipelines.openaq_pipeline import openaq_pipeline
+from tasks.lambda_extract_tasks import create_lambda_extract_task
 
 # DAG Configuration
 default_args = {
@@ -33,26 +32,9 @@ dag = DAG(
     tags=['openaq', 'airquality', 'etl', 's3', 'glue', 'athena', 'pipeline']
 )
 
-# NEW: Create Vietnam-wide extraction task (extract all locations)
-# Replaces city-based extraction (Hanoi, HCMC) for efficiency
-extract_all_vietnam = PythonOperator(
-    task_id='extract_all_vietnam_locations',
-    python_callable=openaq_pipeline,
-    op_kwargs={
-        'file_name': 'vietnam_national_{{ ts_nodash }}',
-        'vietnam_wide': True,  # Enable Vietnam-wide extraction
-        'lookback_hours': 24,
-        'api_limit': 1000,
-        'max_sensor_retries': 3,
-        'parameters': ['pm25', 'pm10', 'no2', 'so2', 'o3', 'co']
-    },
-    dag=dag,
-    retries=2,
-    retry_delay=timedelta(minutes=5)
-)
-
-# Single extraction task (contains all Vietnam locations including Hanoi and HCMC)
-extraction_tasks = [extract_all_vietnam]
+# Lambda extraction task - Serverless extraction on AWS
+# Extracts all Vietnam locations with all 7 air quality parameters
+lambda_extract_task = create_lambda_extract_task(dag, function_name='openaq-fetcher')
 
 # Create Glue transform tasks (trigger + wait)
 # These transform raw JSON to partitioned Parquet using Spark
@@ -66,9 +48,9 @@ trigger_crawler_task, wait_crawler_task = create_catalog_tasks(dag)
 # Verify data is queryable in Athena
 validate_task = create_validate_athena_task(dag)
 
-# Task Dependencies (Updated Pipeline Flow)
-# 1. Extract raw measurements from OpenAQ API
-# 2. Transform raw JSON to Parquet using Spark (Glue job)
-# 3. Catalog transformed data using Glue Crawler
-# 4. Validate data in Athena
-extract_all_vietnam >> trigger_glue_transform_task >> wait_glue_transform_task >> trigger_crawler_task >> wait_crawler_task >> validate_task
+# Task Dependencies (Lambda-based Pipeline Flow)
+# 1. Lambda extracts raw measurements from OpenAQ API → S3 (JSON)
+# 2. Glue transforms raw JSON to Parquet using Spark
+# 3. Glue Crawler catalogs transformed data
+# 4. Validate data queryable in Athena
+lambda_extract_task >> trigger_glue_transform_task >> wait_glue_transform_task >> trigger_crawler_task >> wait_crawler_task >> validate_task

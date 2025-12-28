@@ -36,16 +36,16 @@ ENV_FOLDER_MAP = {
 # Nếu ENV là 'staging' hay gì khác lạ, nó sẽ fallback về 'aq_dev' để an toàn.
 CURRENT_ENV_FOLDER = ENV_FOLDER_MAP.get(ENV, 'aq_dev')
 
-# Raw folders - separated by environment for test/prod isolation
+# Raw folders - using unified aq_raw folder for all environments
 RAW_FOLDER_MAP = {
-    'dev': 'aq_raw_test',
-    'prod': 'aq_raw_prod'
+    'dev': 'aq_raw',
+    'prod': 'aq_raw'
 }
 
 # Current raw folder based on environment
-RAW_FOLDER = RAW_FOLDER_MAP.get(ENV, 'aq_raw_test')
+RAW_FOLDER = RAW_FOLDER_MAP.get(ENV, 'aq_raw')
 
-# Legacy raw folder (deprecated - for backward compatibility)
+# Legacy raw folder mapping (kept for backward compatibility)
 RAW_FOLDER_LEGACY = 'aq_raw'
 
 # ============================================================================

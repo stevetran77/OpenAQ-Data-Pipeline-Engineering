@@ -41,9 +41,12 @@ On Error:
 
 import json
 import os
+import configparser
 from datetime import datetime, timedelta
 
-from lambda_functions.openaq_fetcher.deployment.extract_api import (
+import boto3
+
+from extract_api import (
     connect_openaq,
     fetch_all_vietnam_locations,
     filter_active_sensors,
@@ -51,7 +54,43 @@ from lambda_functions.openaq_fetcher.deployment.extract_api import (
     transform_measurements,
     enrich_measurements_with_metadata
 )
-from lambda_functions.openaq_fetcher.deployment.s3_uploader import upload_measurements_to_s3
+from s3_uploader import upload_measurements_to_s3
+
+
+def load_config_from_s3(bucket_name: str, config_key: str = 'config/config.conf',
+                        aws_region: str = 'ap-southeast-1') -> dict:
+    """
+    Load configuration from S3 config file.
+
+    Args:
+        bucket_name: S3 bucket name
+        config_key: S3 key for config file (default: config/config.conf)
+        aws_region: AWS region (default: ap-southeast-1)
+
+    Returns:
+        dict: Configuration dictionary with keys like 'openaq_api_key', 'aws_bucket_name'
+
+    Raises:
+        Exception: If config file not found or cannot be parsed
+    """
+    try:
+        s3_client = boto3.client('s3', region_name=aws_region)
+        response = s3_client.get_object(Bucket=bucket_name, Key=config_key)
+        config_content = response['Body'].read().decode('utf-8')
+
+        # Parse config file
+        config = configparser.ConfigParser()
+        config.read_string(config_content)
+
+        # Convert to flat dict for easier access
+        config_dict = {}
+        for section in config.sections():
+            for key, value in config.items(section):
+                config_dict[key] = value
+
+        return config_dict
+    except Exception as e:
+        raise Exception(f"[FAIL] Failed to load config from S3: {str(e)}")
 
 
 def get_env_var(key: str, default: str = None) -> str:
@@ -82,7 +121,7 @@ def validate_event(event: dict) -> dict:
             raise ValueError(f"[FAIL] Missing required field in event: {field}")
 
     # Set defaults for optional fields
-    event.setdefault('required_parameters', ['PM2.5', 'PM10'])
+    event.setdefault('required_parameters', ['PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO', 'BC'])
 
     # Validate types
     if not isinstance(event['file_name'], str):
@@ -124,26 +163,30 @@ def lambda_handler(event, context):
 
     try:
         # ====================================================================
-        # Load environment configuration
+        # Load environment configuration from S3
         # ====================================================================
         print("[1/8] Loading environment configuration...")
         try:
-            api_key = get_env_var('OPENAQ_API_KEY')
-            bucket_name = get_env_var('AWS_BUCKET_NAME')
-
-            # Get AWS region from Lambda context (invoked_function_arn)
+            # Get AWS region from Lambda context
             # ARN format: arn:aws:lambda:REGION:ACCOUNT:function:FUNCTION_NAME
             aws_region = 'ap-southeast-1'  # default
             try:
                 arn_parts = context.invoked_function_arn.split(':')
                 if len(arn_parts) >= 4:
-                    aws_region = arn_parts[3]  # Extract region from ARN
+                    aws_region = arn_parts[3]
             except Exception:
-                pass  # Use default if parsing fails
+                pass
+
+            # Load config from S3 (bucket must be the same as where we store data)
+            bucket_name = 'openaq-data-pipeline'
+            config = load_config_from_s3(bucket_name, aws_region=aws_region)
+            api_key = config.get('openaq_api_key')
+            if not api_key:
+                raise ValueError("[FAIL] openaq_api_key not found in config file")
 
             pipeline_env = os.environ.get('PIPELINE_ENV', 'dev')
             print(f"[OK] Config loaded: bucket={bucket_name}, region={aws_region}, env={pipeline_env}")
-        except ValueError as e:
+        except Exception as e:
             return error_response(500, str(e))
 
         # ====================================================================

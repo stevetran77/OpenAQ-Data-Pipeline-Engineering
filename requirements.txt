@@ -2,6 +2,7 @@
 boto3>=1.26.0
 awswrangler>=3.0.0
 redshift-connector>=2.1.0
+apache-airflow-providers-amazon>=8.0.0
 
 # Data Processing
 pandas>=2.0.0

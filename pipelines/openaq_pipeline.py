@@ -90,7 +90,7 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
         active_sensor_ids = filter_active_sensors(
             location_objs,
             lookback_days=7,
-            required_parameters=['PM2.5', 'PM10']
+            required_parameters=['PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO', 'BC']
         )
 
         active_sensor_count = len(active_sensor_ids)
