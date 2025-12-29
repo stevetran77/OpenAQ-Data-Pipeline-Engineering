@@ -404,133 +404,13 @@ powershell -ExecutionPolicy Bypass -Command "Set-Location '.'; & '.\deploy.ps1'"
 4. Verify in Athena: `SELECT DISTINCT city_name FROM aq_dev.vietnam WHERE location_id = 3276359;`
 
 ---
-
-## Documentation
-
-- **[CLAUDE.md](CLAUDE.md)**: Development guidelines and architecture patterns
-- **[Lambda README](lambda_functions/openaq_fetcher/README.md)**: Detailed Lambda deployment and testing
-- **[Bug Fix Report](LAMBDA_BUG_FIX_REPORT.md)**: Technical analysis of parameter filtering issue
-- **[Tests README](tests/README.md)**: Testing strategy and test execution guide
-
----
-
-## Architecture Notes
-
-### Lambda Function (openaq-fetcher)
-
-Serverless extraction function that:
-- Fetches all Vietnam locations from OpenAQ API
-- Filters sensors with required parameters (PM2.5, PM10, NO2, etc.)
-- Extracts hourly measurements (24-hour lookback)
-- Enriches with location metadata (coordinates, city, timezone)
-- Uploads to S3 in NDJSON format (partitioned by date/hour)
-
-**Execution**: Triggered by Airflow DAG via `LambdaInvokeFunctionOperator`
-
-**Configuration**: Loads from S3 config file (no hardcoded secrets)
-
-### Glue Transformation (process_openaq_raw.py)
-
-PySpark job that:
-- Reads NDJSON from S3 raw zone
-- Parses timestamps and handles nulls
-- Deduplicates by location_id + datetime
-- Pivots measurements by parameter
-- Partitions by year/month/day
-- Writes Parquet to S3 dev/prod zones
-
-**Execution**: Triggered by Airflow DAG via `BotoOperator`
-
-### Glue Crawler
-
-Automatically:
-- Scans S3 transformed data
-- Infers schema from Parquet files
-- Creates/updates Glue Data Catalog tables
-- Makes data queryable via Athena
-
----
-
-## Performance & Monitoring
-
-### Expected Data Volumes
-
-- **Locations**: ~50 Vietnam locations with sensors
-- **Sensors per location**: 2-10 sensors
-- **Parameters per sensor**: PM2.5, PM10, NO2, O3, SO2, CO, BC
-- **Measurements**: ~24 hourly records per sensor per run
-- **Raw data size**: ~1-2 MB per extraction
-- **Processed size**: ~200-500 KB per extraction (Parquet)
-
-### Monitoring
-
-**CloudWatch Logs**:
-- Lambda: `/aws/lambda/openaq-fetcher`
-- Glue: AWS Glue Console → Jobs → Logs
-
-**Airflow Monitoring**:
-- UI: http://localhost:8080
-- View task logs for each DAG run
-- Check XCom for inter-task communication
-
-**Data Validation**:
-- Athena query for record counts
-- Check for NULL values in key columns
-- Verify HCMC data extraction: location_id = 3276359
-
----
-
-## Development Workflow
-
-### Making Changes to Lambda
-
-```bash
-# 1. Edit source file
-vim lambda_functions/openaq_fetcher/extract_api.py
-
-# 2. Test locally
-python lambda_functions/openaq_fetcher/handler.py
-
-# 3. Deploy to AWS
-cd lambda_functions/openaq_fetcher
-powershell -ExecutionPolicy Bypass -Command "Set-Location '.'; & '.\deploy.ps1'"
-
-# 4. Verify deployment
-aws lambda get-function --function-name openaq-fetcher --region ap-southeast-1
-```
-
-### Making Changes to Airflow DAG
-
-```bash
-# 1. Edit DAG file
-vim dags/openaq_dag.py
-
-# 2. Validate syntax
-docker-compose exec -T airflow-webserver airflow dags validate dags/openaq_dag.py
-
-# 3. Changes take effect automatically (Airflow rescans every 30 seconds)
-
-# 4. Trigger test run
-# Access http://localhost:8080 and trigger manually
-```
-
-### Making Changes to Glue Job
-
-```bash
-# 1. Edit Spark script
-vim glue_jobs/process_openaq_raw.py
-
-# 2. Upload to S3
-aws s3 cp glue_jobs/process_openaq_raw.py s3://openaq-data-pipeline/scripts/ --region ap-southeast-1
-
-# 3. Update Glue job definition
-# AWS Glue Console → Jobs → Edit job
-# Point to new S3 script location
-
-# 4. Trigger test run
-# Use Airflow DAG trigger
-```
-
+## Contributing
+Contributions are welcome! Please follow these steps:
+1. Fork the repository 
+2. Create a new branch (`git checkout -b feature/your-feature-name`)
+3. Make your changes and commit (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature-name`)
+5. Open a Pull Request
 ---
 
 ## License
@@ -550,5 +430,4 @@ For issues or questions:
 ---
 
 **Last Updated**: December 29, 2025
-**Status**: [OK] Production-ready
 **Maintained By**: Steve Tran
