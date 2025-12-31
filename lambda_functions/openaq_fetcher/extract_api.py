@@ -353,7 +353,22 @@ def enrich_measurements_with_metadata(measurements: list, locations: list) -> li
         # Location ID -> City name mapping for locations with null locality
         # Maps location IDs to proper city names when OpenAQ API doesn't provide locality
         LOCATION_CITY_MAP = {
-            3276359: "Ho Chi Minh",  # CMT8 - HCMC
+            # Hanoi locations (based on coordinates ~21°N)
+            18: "Hanoi",          # SPARTAN - Vietnam Acad. Sci.
+            2539: "Hanoi",        # US Diplomatic Post: Hanoi
+            307169: "Hanoi",      # nồng độ pm
+            6123215: "Hanoi",     # OceanPark
+
+            # Ho Chi Minh City locations (based on coordinates ~10-11°N)
+            2446: "Ho Chi Minh City",      # US Diplomatic Post: Ho Chi Minh City
+            268816: "Ho Chi Minh City",    # outdoor
+            268821: "Ho Chi Minh City",    # outdoor2
+            268929: "Ho Chi Minh City",    # od3
+            268935: "Ho Chi Minh City",    # od5
+            268937: "Ho Chi Minh City",    # od6
+            3276359: "Ho Chi Minh City",   # CMT8
+            4743591: "Ho Chi Minh City",   # Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM
+            6068138: "Ho Chi Minh City",   # Care Centre
         }
 
         # Build sensor_id -> location metadata mapping
