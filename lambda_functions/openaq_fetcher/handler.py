@@ -103,7 +103,11 @@ def get_env_var(key: str, default: str = None) -> str:
 
 def validate_event(event: dict) -> dict:
     """
-    Validate Lambda event payload.
+    Validate Lambda event payload (updated for backfill support).
+
+    Supports two modes:
+    1. BACKFILL MODE: Absolute date range (date_from_iso + date_to_iso)
+    2. DAILY MODE: Relative lookback (lookback_hours) - original behavior
 
     Args:
         event: Lambda event from Airflow
@@ -112,24 +116,43 @@ def validate_event(event: dict) -> dict:
         dict: Validated and normalized event
 
     Raises:
-        ValueError: If required fields are missing
+        ValueError: If required fields are missing or invalid
     """
-    required_fields = ['file_name', 'vietnam_wide', 'lookback_hours']
+    # Check if this is backfill mode or daily mode
+    is_backfill = 'date_from_iso' in event or 'date_to_iso' in event
 
-    for field in required_fields:
-        if field not in event:
-            raise ValueError(f"[FAIL] Missing required field in event: {field}")
+    if is_backfill:
+        # Backfill mode - require absolute dates
+        required_fields = ['file_name', 'vietnam_wide', 'date_from_iso', 'date_to_iso']
+        for field in required_fields:
+            if field not in event:
+                raise ValueError(f"[FAIL] Missing required field for backfill mode: {field}")
 
-    # Set defaults for optional fields
-    event.setdefault('required_parameters', ['PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO', 'BC'])
+        # Validate ISO format
+        try:
+            datetime.fromisoformat(event['date_from_iso'].replace('Z', '+00:00'))
+            datetime.fromisoformat(event['date_to_iso'].replace('Z', '+00:00'))
+        except (ValueError, AttributeError) as e:
+            raise ValueError(f"[FAIL] Invalid ISO datetime format: {str(e)}")
+    else:
+        # Daily mode - require lookback_hours
+        required_fields = ['file_name', 'vietnam_wide', 'lookback_hours']
+        for field in required_fields:
+            if field not in event:
+                raise ValueError(f"[FAIL] Missing required field in event: {field}")
 
-    # Validate types
+        if not isinstance(event['lookback_hours'], int) or event['lookback_hours'] <= 0:
+            raise ValueError("[FAIL] lookback_hours must be a positive integer")
+
+    # Common validations
     if not isinstance(event['file_name'], str):
         raise ValueError("[FAIL] file_name must be a string")
     if not isinstance(event['vietnam_wide'], bool):
         raise ValueError("[FAIL] vietnam_wide must be a boolean")
-    if not isinstance(event['lookback_hours'], int) or event['lookback_hours'] <= 0:
-        raise ValueError("[FAIL] lookback_hours must be a positive integer")
+
+    # Set defaults
+    event.setdefault('required_parameters', ['PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO', 'BC'])
+    event.setdefault('rate_limit_delay', 0)
 
     return event
 
@@ -202,14 +225,33 @@ def lambda_handler(event, context):
         # Extract event parameters
         file_name = event['file_name']
         vietnam_wide = event['vietnam_wide']
-        lookback_hours = event['lookback_hours']
         required_parameters = event.get('required_parameters', ['PM2.5', 'PM10'])
+        rate_limit_delay = event.get('rate_limit_delay', 0)
+
+        # Check if backfill mode or daily mode
+        is_backfill = 'date_from_iso' in event
+        if is_backfill:
+            lookback_hours = None
+            date_from_iso = event['date_from_iso']
+            date_to_iso = event['date_to_iso']
+        else:
+            lookback_hours = event['lookback_hours']
+            date_from_iso = None
+            date_to_iso = None
 
         print(f"[INFO] Parameters:")
         print(f"       - file_name: {file_name}")
         print(f"       - vietnam_wide: {vietnam_wide}")
-        print(f"       - lookback_hours: {lookback_hours}")
+        if is_backfill:
+            print(f"       - MODE: Backfill (absolute dates)")
+            print(f"       - date_from_iso: {date_from_iso}")
+            print(f"       - date_to_iso: {date_to_iso}")
+        else:
+            print(f"       - MODE: Daily pipeline (relative lookback)")
+            print(f"       - lookback_hours: {lookback_hours}")
         print(f"       - required_parameters: {required_parameters}")
+        if rate_limit_delay > 0:
+            print(f"       - rate_limit_delay: {rate_limit_delay} seconds")
 
         # ====================================================================
         # STEP 1: Connect to OpenAQ
@@ -265,10 +307,27 @@ def lambda_handler(event, context):
         # ====================================================================
         print("[6/8] Extracting measurements from sensors...")
         try:
-            date_to = datetime.utcnow()
-            date_from = date_to - timedelta(hours=lookback_hours)
+            # Support both relative (lookback_hours) and absolute (date_from_iso/date_to_iso) date ranges
+            if is_backfill:
+                # Historical backfill mode - absolute dates
+                date_from = datetime.fromisoformat(date_from_iso.replace('Z', '+00:00'))
+                date_to = datetime.fromisoformat(date_to_iso.replace('Z', '+00:00'))
+                date_from = date_from.replace(tzinfo=None)
+                date_to = date_to.replace(tzinfo=None)
+                print(f"[INFO] Using absolute date range: {date_from.isoformat()} to {date_to.isoformat()}")
+            else:
+                # Daily pipeline mode - relative lookback
+                date_to = datetime.utcnow()
+                date_from = date_to - timedelta(hours=lookback_hours)
+                print(f"[INFO] Using relative lookback: {lookback_hours} hours")
 
-            measurements = extract_measurements(headers, active_sensor_ids, date_from, date_to)
+            measurements = extract_measurements(
+                headers,
+                active_sensor_ids,
+                date_from,
+                date_to,
+                rate_limit_delay=rate_limit_delay
+            )
 
             if len(measurements) == 0:
                 warning_msg = "[WARNING] No measurements extracted. Lambda stopping."

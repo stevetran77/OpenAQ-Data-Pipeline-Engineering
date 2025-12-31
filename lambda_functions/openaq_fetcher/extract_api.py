@@ -191,7 +191,8 @@ def filter_active_sensors(locations: list, lookback_days: int = 7,
 # ============================================================================
 
 def extract_measurements(headers: dict, sensor_ids: list,
-                        date_from: datetime, date_to: datetime) -> list:
+                        date_from: datetime, date_to: datetime,
+                        rate_limit_delay: int = 0) -> list:
     """
     Extract hourly air quality measurements from sensors.
 
@@ -203,6 +204,7 @@ def extract_measurements(headers: dict, sensor_ids: list,
         sensor_ids: List of sensor IDs to fetch measurements from
         date_from: Start datetime (UTC)
         date_to: End datetime (UTC)
+        rate_limit_delay: Seconds to wait between sensor requests (default: 0)
 
     Returns:
         list: Measurement records, each with:
@@ -211,14 +213,22 @@ def extract_measurements(headers: dict, sensor_ids: list,
     Raises:
         (No exception raised - continues on individual sensor failures)
     """
+    import time
+
     all_measurements = []
     total_records = 0
 
     print(f"[INFO] Extracting measurements from {len(sensor_ids)} sensors")
     print(f"       Period: {date_from.isoformat()} to {date_to.isoformat()}")
+    if rate_limit_delay > 0:
+        print(f"       Rate limit delay: {rate_limit_delay} seconds between requests")
 
     for idx, sensor_id in enumerate(sensor_ids, 1):
         try:
+            # Add rate limiting delay between sensor requests (skip first request)
+            if rate_limit_delay > 0 and idx > 1:
+                time.sleep(rate_limit_delay)
+
             meas_url = f"{BASE_URL}/sensors/{sensor_id}/measurements"
             meas_params = {
                 'datetime_from': date_from.isoformat(),
