@@ -9,7 +9,7 @@ from datetime import timedelta
 from airflow.operators.python import PythonOperator
 from airflow.sensors.python import PythonSensor
 from pipelines.glue_pipeline import trigger_glue_transform_job, check_glue_transform_status
-from utils.constants import GLUE_TRANSFORM_JOB_NAME
+from utils.constants import GLUE_TRANSFORM_JOB_NAME, GLUE_JOB_POLL_INTERVAL, GLUE_JOB_DEFAULT_TIMEOUT
 
 
 def create_trigger_glue_transform_task(dag, job_name: str = None, retries: int = 1):
@@ -62,8 +62,8 @@ def create_trigger_glue_transform_task(dag, job_name: str = None, retries: int =
 
 def create_wait_glue_transform_task(
     dag,
-    poke_interval: int = 60,
-    timeout: int = 7200,
+    poke_interval: int = GLUE_JOB_POLL_INTERVAL,
+    timeout: int = GLUE_JOB_DEFAULT_TIMEOUT,
     mode: str = 'poke'
 ):
     """

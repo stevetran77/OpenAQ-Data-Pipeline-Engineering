@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import json
 
-# Import các biến môi trường và folder từ constants
+# Import environment variables and folders from constants
 from utils.constants import (
     OPENAQ_API_KEY,
     OPENAQ_TARGET_CITY,
@@ -16,7 +16,11 @@ from utils.constants import (
     GLUE_JOB_TIMEOUT,
     GLUE_WORKER_TYPE,
     GLUE_NUM_WORKERS,
+    DEFAULT_REQUIRED_PARAMETERS,
+    DEFAULT_LOOKBACK_DAYS,
 )
+
+from utils.logging_utils import log_start, log_info, log_ok, log_success, log_warning, log_fail
 
 # Import refactored extraction functions from openaq_etl
 from etls.openaq_etl import (
@@ -65,37 +69,37 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
     country = country or OPENAQ_TARGET_COUNTRY
     lookback_hours = lookback_hours or OPENAQ_LOOKBACK_HOURS
 
-    print(f"[START] OpenAQ Extraction Pipeline - {datetime.now()}")
+    log_start(f"OpenAQ Extraction Pipeline - {datetime.now()}")
     if vietnam_wide:
-        print(f"Target: ALL Vietnam locations | Lookback: {lookback_hours} hours")
+        log_info(f"Target: ALL Vietnam locations | Lookback: {lookback_hours} hours")
     else:
-        print(f"Target: {city}, {country} | Lookback: {lookback_hours} hours")
+        log_info(f"Target: {city}, {country} | Lookback: {lookback_hours} hours")
 
     try:
         # STEP 1: Connect to OpenAQ (Get Headers)
-        print("[1/6] Preparing OpenAQ API Headers...")
+        log_info("[1/6] Preparing OpenAQ API Headers...")
         headers = connect_openaq(api_key=OPENAQ_API_KEY)
-        print("[OK] Headers prepared")
+        log_ok("Headers prepared")
 
         # STEP 2: Fetch all Vietnam locations with pagination
-        print("[2/6] Fetching all Vietnam locations with sensors...")
+        log_info("[2/6] Fetching all Vietnam locations with sensors...")
         sensor_ids, location_objs = fetch_all_vietnam_locations(headers)
 
         location_count = len(location_objs)
         initial_sensor_count = len(sensor_ids)
-        print(f"[OK] Found {location_count} locations with {initial_sensor_count} sensors")
+        log_ok(f"Found {location_count} locations with {initial_sensor_count} sensors")
 
         # STEP 3: Filter active sensors (recent data + required parameters)
-        print("[3/6] Filtering active sensors...")
+        log_info("[3/6] Filtering active sensors...")
         active_sensor_ids = filter_active_sensors(
             location_objs,
-            lookback_days=7,
-            required_parameters=['PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO', 'BC']
+            lookback_days=DEFAULT_LOOKBACK_DAYS,
+            required_parameters=DEFAULT_REQUIRED_PARAMETERS
         )
 
         active_sensor_count = len(active_sensor_ids)
         if active_sensor_count == 0:
-            print("[WARNING] No active sensors found. Pipeline stopping.")
+            log_warning("No active sensors found. Pipeline stopping.")
             return {
                 'status': 'WARNING',
                 'location_count': location_count,
@@ -103,17 +107,17 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
                 'raw_s3_path': None
             }
 
-        print(f"[OK] Found {active_sensor_count} active sensors (from {initial_sensor_count} total)")
+        log_ok(f"Found {active_sensor_count} active sensors (from {initial_sensor_count} total)")
 
         # STEP 4: Extract measurements from active sensors
-        print("[4/6] Extracting measurements from sensors...")
+        log_info("[4/6] Extracting measurements from sensors...")
         date_to = datetime.now()
         date_from = date_to - timedelta(hours=lookback_hours)
 
         measurements = extract_measurements(headers, active_sensor_ids, date_from, date_to)
 
         if len(measurements) == 0:
-            print("[WARNING] No measurements extracted. Pipeline stopping.")
+            log_warning("No measurements extracted. Pipeline stopping.")
             return {
                 'status': 'WARNING',
                 'location_count': location_count,
@@ -121,20 +125,20 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
                 'raw_s3_path': None
             }
 
-        print(f"[OK] Extracted {len(measurements)} measurements")
+        log_ok(f"Extracted {len(measurements)} measurements")
 
         # STEP 5: Transform measurements into structured DataFrame
-        print("[5/6] Transforming measurements...")
+        log_info("[5/6] Transforming measurements...")
         df = transform_measurements(measurements)
-        print(f"[OK] Transformed {len(df)} records")
+        log_ok(f"Transformed {len(df)} records")
 
         # STEP 6: Enrich with location metadata (city, coordinates, timezone, etc)
-        print("[6/6] Enriching measurements with location metadata...")
+        log_info("[6/6] Enriching measurements with location metadata...")
         df_enriched = enrich_measurements_with_metadata(df, location_objs)
-        print(f"[OK] Enriched {len(df_enriched)} records with location metadata")
+        log_ok(f"Enriched {len(df_enriched)} records with location metadata")
 
         # STEP 7: Archive raw data to S3 (JSON format for Glue to process)
-        print("[7/7] Archiving raw data to S3...")
+        log_info("[7/7] Archiving raw data to S3...")
         now = datetime.now()
 
         # Structure: aq_raw/year/month/day/hour/raw_measurements.json
@@ -159,7 +163,7 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
             Body=json.dumps(wrapped_data, default=str),
             ContentType='application/json'
         )
-        print(f"[SUCCESS] Uploaded {len(df_enriched)} records to s3://{AWS_BUCKET_NAME}/{raw_key}")
+        log_success(f"Uploaded {len(df_enriched)} records to s3://{AWS_BUCKET_NAME}/{raw_key}")
 
         result = {
             'status': 'SUCCESS',
@@ -168,15 +172,15 @@ def openaq_pipeline(file_name: str, city: str = None, country: str = None,
             'raw_s3_path': f"s3://{AWS_BUCKET_NAME}/{raw_key}"
         }
 
-        print(f"[SUCCESS] Extraction complete:")
-        print(f"  - Total Locations: {location_count}")
-        print(f"  - Total Sensors: {initial_sensor_count}")
-        print(f"  - Active Sensors: {active_sensor_count}")
-        print(f"  - Records Extracted: {result['record_count']}")
-        print(f"  - Raw data: {result['raw_s3_path']}")
+        log_success("Extraction complete:")
+        log_info(f"  - Total Locations: {location_count}")
+        log_info(f"  - Total Sensors: {initial_sensor_count}")
+        log_info(f"  - Active Sensors: {active_sensor_count}")
+        log_info(f"  - Records Extracted: {result['record_count']}")
+        log_info(f"  - Raw data: {result['raw_s3_path']}")
 
         return result
 
     except Exception as e:
-        print(f"[FAIL] Pipeline failed: {str(e)}")
+        log_fail(f"Pipeline failed: {str(e)}")
         raise

@@ -56,12 +56,12 @@ def log_warning(msg: str):
     logger.warning(msg)
 
 # ============================================================================
-# STEP 1: Khởi tạo Glue Context
+# STEP 1: Initialize Glue Context
 # ============================================================================
 log_info("Initializing Glue Context...")
 
-# Gộp tất cả tham số vào một list duy nhất
-# AWS Glue sẽ tự động bỏ qua các tham số thừa (như --TempDir) không có trong list này
+# Combine all parameters into a single list
+# AWS Glue will automatically ignore extra parameters (like --TempDir) not in this list
 args = getResolvedOptions(
     sys.argv,
     ['JOB_NAME', 'input_path', 'output_path', 'env', 'partition_cols']
@@ -78,15 +78,15 @@ JOB_NAME = args['JOB_NAME']
 INPUT_PATH = args['input_path']
 OUTPUT_PATH = args['output_path']
 
-# Lấy giá trị từ args (Lưu ý: getResolvedOptions bắt buộc các tham số trên phải tồn tại)
-# Vì Airflow pipeline của bạn LUÔN truyền env và partition_cols, nên không sợ lỗi thiếu tham số.
+# Get values from args (Note: getResolvedOptions requires these parameters to exist)
+# Since your Airflow pipeline ALWAYS passes env and partition_cols, there's no risk of missing parameters
 ENV = args.get('env', 'dev')
 PARTITION_COLS = args.get('partition_cols', 'year,month,day').split(',')
 
 log_ok(f"Glue job initialized: {JOB_NAME}")
 
 # ============================================================================
-# STEP 2: Đọc dữ liệu Raw (JSON) từ S3
+# STEP 2: Read Raw Data (JSON) from S3
 # ============================================================================
 log_info("\n=== STEP 1: Reading raw JSON data ===")
 
@@ -114,7 +114,7 @@ log_info("\n=== STEP 2: Transform measurements ===")
 
 try:
     # Parse datetime string to timestamp
-    # Sử dụng cast("timestamp") để tự động xử lý định dạng ISO 8601 có timezone (+07:00)
+    # Using cast("timestamp") to automatically handle ISO 8601 format with timezone (+07:00)
     df_transformed = df_raw.withColumn(
         "datetime",
         F.col("datetime").cast("timestamp")
@@ -205,9 +205,12 @@ except Exception as e:
     raise
 
 # ============================================================================
-# STEP 6: Validate output
+# STEP 5: Validate output
 # ============================================================================
 log_info("\n=== STEP 5: Validate output ===")
+
+# Critical columns that must exist
+CRITICAL_COLUMNS = ["location_id", "datetime", "year", "month", "day"]
 
 try:
     # Check record count
@@ -215,8 +218,7 @@ try:
         log_warning("Output DataFrame is empty!")
 
     # Check critical columns exist
-    critical_cols = ["location_id", "datetime", "year", "month", "day"]
-    missing_cols = [col for col in critical_cols if col not in df_enriched.columns]
+    missing_cols = [col for col in CRITICAL_COLUMNS if col not in df_enriched.columns]
 
     if missing_cols:
         log_fail(f"Missing critical columns: {missing_cols}")
@@ -225,7 +227,7 @@ try:
     # Check null values in critical columns
     null_counts = df_enriched.select([
         F.count(F.when(F.col(col).isNull(), 1)).alias(col)
-        for col in critical_cols
+        for col in CRITICAL_COLUMNS
     ]).collect()[0].asDict()
 
     log_ok(f"Output records: {enriched_count}")

@@ -8,7 +8,7 @@ sys.path.insert(0, '/opt/airflow/')
 from airflow.operators.python import PythonOperator
 from airflow.sensors.python import PythonSensor
 from pipelines.glue_pipeline import trigger_crawler_task, check_crawler_status
-from utils.constants import GLUE_CRAWLER_NAME
+from utils.constants import GLUE_CRAWLER_NAME, CRAWLER_POLL_INTERVAL, CRAWLER_DEFAULT_TIMEOUT
 
 
 def create_trigger_crawler_task(dag, crawler_name: str = None, retries: int = 3):
@@ -34,14 +34,15 @@ def create_trigger_crawler_task(dag, crawler_name: str = None, retries: int = 3)
     return task
 
 
-def create_wait_crawler_task(dag, poke_interval: int = 60, timeout: int = 1800):
+def create_wait_crawler_task(dag, poke_interval: int = CRAWLER_POLL_INTERVAL, 
+                            timeout: int = CRAWLER_DEFAULT_TIMEOUT):
     """
     Create a sensor task to wait for Glue Crawler completion.
 
     Args:
         dag: Airflow DAG object
-        poke_interval: Check crawler status every N seconds
-        timeout: Timeout in seconds (default: 30 minutes)
+        poke_interval: Check crawler status every N seconds (default: CRAWLER_POLL_INTERVAL)
+        timeout: Timeout in seconds (default: CRAWLER_DEFAULT_TIMEOUT = 30 minutes)
 
     Returns:
         PythonSensor: Wait for crawler task

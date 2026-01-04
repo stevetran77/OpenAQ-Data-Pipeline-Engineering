@@ -143,6 +143,30 @@ OPENAQ_LOOKBACK_HOURS = config.getint("openaq_settings", "lookback_hours", fallb
 
 
 # ============================================================================
+# PIPELINE EXECUTION CONSTANTS
+# ============================================================================
+# Sensor filtering defaults
+DEFAULT_LOOKBACK_DAYS = 7
+DEFAULT_REQUIRED_PARAMETERS = ['PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO', 'BC']
+
+# Pagination settings
+DEFAULT_PAGE_SIZE = 100
+DEFAULT_MEASUREMENT_LIMIT = 1000
+
+# Logging intervals
+LOG_PROGRESS_INTERVAL = 10  # Log every N sensors processed
+
+# Timeouts (in seconds)
+API_REQUEST_TIMEOUT = 30
+CRAWLER_DEFAULT_TIMEOUT = 1800  # 30 minutes
+GLUE_JOB_DEFAULT_TIMEOUT = 7200  # 2 hours
+
+# Polling intervals (in seconds)
+CRAWLER_POLL_INTERVAL = 60
+GLUE_JOB_POLL_INTERVAL = 60
+
+
+# ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
 def get_config(section: str, key: str, fallback=None):

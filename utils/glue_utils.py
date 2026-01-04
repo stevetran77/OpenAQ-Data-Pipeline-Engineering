@@ -7,6 +7,7 @@ from utils.constants import (
     AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, AWS_REGION,
     GLUE_DATABASE_NAME, GLUE_CRAWLER_NAME, GLUE_ETL_JOB_NAME
 )
+from utils.logging_utils import log_ok, log_success, log_fail, log_warning
 
 
 def get_glue_client():
@@ -25,10 +26,10 @@ def start_crawler(crawler_name: str) -> dict:
     client = get_glue_client()
     try:
         response = client.start_crawler(Name=crawler_name)
-        print(f"[OK] Crawler '{crawler_name}' started")
+        log_ok(f"Crawler '{crawler_name}' started")
         return response
     except Exception as e:
-        print(f"[FAIL] Failed to start crawler: {str(e)}")
+        log_fail(f"Failed to start crawler: {str(e)}")
         raise
 
 
@@ -45,12 +46,12 @@ def wait_for_crawler(crawler_name: str, timeout: int = 1800) -> bool:
     while time.time() - start_time < timeout:
         status = get_crawler_status(crawler_name)
         if status == 'READY':
-            print(f"[SUCCESS] Crawler '{crawler_name}' completed")
+            log_success(f"Crawler '{crawler_name}' completed")
             return True
         elif status == 'STOPPING':
-            print(f"[WARNING] Crawler '{crawler_name}' is stopping")
+            log_warning(f"Crawler '{crawler_name}' is stopping")
         time.sleep(30)
-    print(f"[FAIL] Crawler '{crawler_name}' timed out after {timeout}s")
+    log_fail(f"Crawler '{crawler_name}' timed out after {timeout}s")
     return False
 
 
@@ -63,10 +64,10 @@ def start_glue_job(job_name: str, arguments: dict = None) -> str:
             params['Arguments'] = arguments
         response = client.start_job_run(**params)
         run_id = response['JobRunId']
-        print(f"[OK] Glue job '{job_name}' started with run ID: {run_id}")
+        log_ok(f"Glue job '{job_name}' started with run ID: {run_id}")
         return run_id
     except Exception as e:
-        print(f"[FAIL] Failed to start Glue job: {str(e)}")
+        log_fail(f"Failed to start Glue job: {str(e)}")
         raise
 
 
@@ -83,13 +84,13 @@ def wait_for_job(job_name: str, run_id: str, timeout: int = 3600) -> bool:
     while time.time() - start_time < timeout:
         status = get_job_run_status(job_name, run_id)
         if status == 'SUCCEEDED':
-            print(f"[SUCCESS] Glue job '{job_name}' completed successfully")
+            log_success(f"Glue job '{job_name}' completed successfully")
             return True
         elif status in ['FAILED', 'ERROR', 'TIMEOUT']:
-            print(f"[FAIL] Glue job '{job_name}' failed with status: {status}")
+            log_fail(f"Glue job '{job_name}' failed with status: {status}")
             return False
         time.sleep(60)
-    print(f"[FAIL] Glue job '{job_name}' timed out after {timeout}s")
+    log_fail(f"Glue job '{job_name}' timed out after {timeout}s")
     return False
 
 

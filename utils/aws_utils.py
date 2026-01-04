@@ -9,14 +9,19 @@ from utils.constants import (
     AWS_REGION,
     AWS_BUCKET_NAME
 )
+from utils.logging_utils import log_ok, log_success, log_fail
 
 
 def get_s3_client():
     """
     Create and return authenticated S3 client.
+    
+    Uses credentials from constants module. Supports temporary credentials
+    via session token if provided.
+    
+    Returns:
+        boto3.client: Configured S3 client
     """
-    # Ưu tiên dùng Airflow Connection nếu có (để bảo mật hơn)
-    # Nhưng giữ logic cũ tương thích với file config hiện tại
     session_config = {
         'aws_access_key_id': AWS_ACCESS_KEY_ID,
         'aws_secret_access_key': AWS_SECRET_ACCESS_KEY,
@@ -38,8 +43,7 @@ def upload_to_s3(data: pd.DataFrame, bucket: str, key: str,
 
     try:
         if format == 'json':
-            # Convert DataFrame to JSON
-            # [FIX] Thêm lines=True để tạo format NDJSON (tương thích tốt nhất với Spark/Glue)
+            # Convert DataFrame to JSON (NDJSON format for Spark/Glue compatibility)
             json_buffer = data.to_json(orient='records', date_format='iso', lines=True)
             
             s3_client.put_object(
@@ -51,7 +55,6 @@ def upload_to_s3(data: pd.DataFrame, bucket: str, key: str,
         elif format == 'parquet':
             # Save to temporary parquet file then upload
             buffer = io.BytesIO()
-            # engine='pyarrow' mặc định hỗ trợ tốt nhất
             data.to_parquet(buffer, engine='pyarrow', compression='snappy', index=False)
             buffer.seek(0)
             s3_client.put_object(
@@ -62,11 +65,11 @@ def upload_to_s3(data: pd.DataFrame, bucket: str, key: str,
         else:
             raise ValueError(f"Unsupported format: {format}")
 
-        print(f"[SUCCESS] Uploaded {len(data)} records to s3://{bucket}/{key}")
+        log_success(f"Uploaded {len(data)} records to s3://{bucket}/{key}")
         return True
 
     except Exception as e:
-        print(f"[FAIL] Failed to upload to S3: {str(e)}")
+        log_fail(f"Failed to upload to S3: {str(e)}")
         raise
 
 
@@ -77,10 +80,10 @@ def check_s3_connection() -> bool:
     try:
         s3_client = get_s3_client()
         s3_client.list_buckets()
-        print("[OK] S3 connection successful")
+        log_ok("S3 connection successful")
         return True
     except Exception as e:
-        print(f"[FAIL] S3 connection failed: {str(e)}")
+        log_fail(f"S3 connection failed: {str(e)}")
         return False
 
 
@@ -101,13 +104,13 @@ def upload_to_s3_partitioned(data: pd.DataFrame, bucket: str, base_key: str,
 
     # Group by partition
     for partition, group_df in df.groupby(partition_cols):
-        # Tạo đường dẫn thư mục Partition (Hive style: key=value)
+        # Create Hive-style partition path (key=value)
         partition_path = '/'.join([f"{col}={val}" for col, val in zip(partition_cols, partition)])
         s3_key = f"{base_key}/{partition_path}/data.{format}"
         
-        # QUAN TRỌNG: Loại bỏ các cột partition khỏi nội dung file
-        # Vì thông tin này đã nằm trên đường dẫn thư mục rồi.
-        # Nếu để lại sẽ gây lỗi "Duplicate columns" trong Athena/Glue.
+        # IMPORTANT: Remove partition columns from file content
+        # This information is already in the directory path.
+        # Leaving them in causes "Duplicate columns" errors in Athena/Glue.
         group_df_clean = group_df.drop(columns=partition_cols)
         
         upload_to_s3(group_df_clean, bucket, s3_key, format)

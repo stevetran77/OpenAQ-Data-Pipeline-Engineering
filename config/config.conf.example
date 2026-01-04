@@ -22,15 +22,6 @@ glue_crawler_name = openaq_s3_crawler
 glue_etl_job_name = openaq_to_redshift
 glue_iam_role = arn:aws:iam::ACCOUNT_ID:role/GlueServiceRole
 
-[aws_redshift]
-redshift_host = your-cluster.region.redshift.amazonaws.com
-redshift_port = 5439
-redshift_database = openaq_warehouse
-redshift_username = admin
-redshift_password = YOUR_PASSWORD
-redshift_schema = public
-redshift_iam_role = arn:aws:iam::ACCOUNT_ID:role/RedshiftS3Role
-
 [api_keys]
 openaq_api_key = YOUR_OPENAQ_API_KEY
 

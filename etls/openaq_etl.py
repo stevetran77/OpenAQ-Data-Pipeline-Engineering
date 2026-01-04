@@ -1,9 +1,18 @@
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
-from utils.constants import OPENAQ_API_KEY
+from utils.constants import (
+    OPENAQ_API_KEY,
+    DEFAULT_PAGE_SIZE,
+    DEFAULT_MEASUREMENT_LIMIT,
+    LOG_PROGRESS_INTERVAL,
+    API_REQUEST_TIMEOUT,
+    DEFAULT_LOOKBACK_DAYS,
+    DEFAULT_REQUIRED_PARAMETERS
+)
+from utils.logging_utils import log_info, log_ok, log_success, log_fail, log_warning
 
-# Cấu hình API v3
+# OpenAQ API v3 configuration
 BASE_URL = "https://api.openaq.org/v3"
 
 # ============================================================================
@@ -28,7 +37,7 @@ def connect_openaq(api_key: str) -> dict:
 # ============================================================================
 
 def fetch_all_vietnam_locations(headers: dict, countries_id: int = 56,
-                                page_size: int = 100) -> tuple:
+                                page_size: int = DEFAULT_PAGE_SIZE) -> tuple:
     """
     Fetch ALL Vietnam locations with pagination.
 
@@ -54,7 +63,7 @@ def fetch_all_vietnam_locations(headers: dict, countries_id: int = 56,
         page = 1
         total_fetched = 0
 
-        print(f"[INFO] Fetching ALL Vietnam locations (countries_id={countries_id})...")
+        log_info(f"Fetching ALL Vietnam locations (countries_id={countries_id})...")
 
         while True:
             params = {
@@ -63,16 +72,16 @@ def fetch_all_vietnam_locations(headers: dict, countries_id: int = 56,
                 'page': page
             }
 
-            response = requests.get(f"{BASE_URL}/locations", headers=headers, params=params, timeout=30)
+            response = requests.get(f"{BASE_URL}/locations", headers=headers, params=params, timeout=API_REQUEST_TIMEOUT)
             if response.status_code != 200:
-                print(f"[FAIL] API Error {response.status_code}: {response.text}")
+                log_fail(f"API Error {response.status_code}: {response.text}")
                 break
 
             data = response.json()
             results = data.get('results', [])
 
             if not results:
-                print(f"[INFO] Pagination complete at page {page}")
+                log_info(f"Pagination complete at page {page}")
                 break
 
             # Extract sensor IDs from locations
@@ -85,14 +94,14 @@ def fetch_all_vietnam_locations(headers: dict, countries_id: int = 56,
 
             all_locations.extend(results)
             total_fetched += len(results)
-            print(f"[INFO] Page {page}: +{len(results)} locations (TOTAL: {total_fetched})")
+            log_info(f"Page {page}: +{len(results)} locations (TOTAL: {total_fetched})")
             page += 1
 
-        print(f"[SUCCESS] Fetched {len(all_locations)} Vietnam locations with {len(sensor_ids)} sensors")
+        log_success(f"Fetched {len(all_locations)} Vietnam locations with {len(sensor_ids)} sensors")
         return list(sensor_ids), all_locations
 
     except Exception as e:
-        print(f"[FAIL] Failed to fetch Vietnam locations: {str(e)}")
+        log_fail(f"Failed to fetch Vietnam locations: {str(e)}")
         raise
 
 
@@ -100,7 +109,7 @@ def fetch_all_vietnam_locations(headers: dict, countries_id: int = 56,
 # STEP 3: Filter Active Sensors
 # ============================================================================
 
-def filter_active_sensors(locations: list, lookback_days: int = 7,
+def filter_active_sensors(locations: list, lookback_days: int = DEFAULT_LOOKBACK_DAYS,
                           required_parameters: list = None) -> list:
     """
     Filter sensors by activity and required parameters.
@@ -111,8 +120,8 @@ def filter_active_sensors(locations: list, lookback_days: int = 7,
 
     Args:
         locations: List of location objects from fetch_all_vietnam_locations()
-        lookback_days: Only keep sensors with data in last N days (default: 7)
-        required_parameters: List of required parameter names (default: ['PM2.5', 'PM10'])
+        lookback_days: Only keep sensors with data in last N days
+        required_parameters: List of required parameter names (default: all major pollutants)
 
     Returns:
         list: Filtered sensor IDs that meet all criteria
@@ -121,13 +130,13 @@ def filter_active_sensors(locations: list, lookback_days: int = 7,
         Exception: If filtering fails
     """
     if required_parameters is None:
-        required_parameters = ['PM2.5', 'PM10']
+        required_parameters = DEFAULT_REQUIRED_PARAMETERS
 
     try:
         active_sensor_ids = []
         cutoff_date = datetime.utcnow() - timedelta(days=lookback_days)
 
-        print(f"[INFO] Filtering sensors: lookback={lookback_days} days, required={required_parameters}")
+        log_info(f"Filtering sensors: lookback={lookback_days} days, required={required_parameters}")
 
         for loc in locations:
             # Check if location has recent data
@@ -161,11 +170,11 @@ def filter_active_sensors(locations: list, lookback_days: int = 7,
                         if sensor_id and sensor_id not in active_sensor_ids:
                             active_sensor_ids.append(sensor_id)
 
-        print(f"[SUCCESS] Filtered to {len(active_sensor_ids)} active sensors")
+        log_success(f"Filtered to {len(active_sensor_ids)} active sensors")
         return active_sensor_ids
 
     except Exception as e:
-        print(f"[FAIL] Failed to filter sensors: {str(e)}")
+        log_fail(f"Failed to filter sensors: {str(e)}")
         raise
 
 
@@ -197,8 +206,8 @@ def extract_measurements(headers: dict, sensor_ids: list,
     all_measurements = []
     total_records = 0
 
-    print(f"[INFO] Extracting measurements from {len(sensor_ids)} sensors")
-    print(f"       Period: {date_from.isoformat()} to {date_to.isoformat()}")
+    log_info(f"Extracting measurements from {len(sensor_ids)} sensors")
+    log_info(f"Period: {date_from.isoformat()} to {date_to.isoformat()}")
 
     for idx, sensor_id in enumerate(sensor_ids, 1):
         try:
@@ -206,10 +215,10 @@ def extract_measurements(headers: dict, sensor_ids: list,
             meas_params = {
                 'datetime_from': date_from.isoformat(),
                 'datetime_to': date_to.isoformat(),
-                'limit': 1000
+                'limit': DEFAULT_MEASUREMENT_LIMIT
             }
 
-            meas_resp = requests.get(meas_url, headers=headers, params=meas_params, timeout=30)
+            meas_resp = requests.get(meas_url, headers=headers, params=meas_params, timeout=API_REQUEST_TIMEOUT)
 
             if meas_resp.status_code != 200:
                 continue
@@ -239,15 +248,15 @@ def extract_measurements(headers: dict, sensor_ids: list,
                 all_measurements.append(measurement_record)
                 total_records += 1
 
-            # Log progress every 10 sensors
-            if idx % 10 == 0:
-                print(f"[INFO] Processed {idx}/{len(sensor_ids)} sensors, {total_records} records so far")
+            # Log progress at regular intervals
+            if idx % LOG_PROGRESS_INTERVAL == 0:
+                log_info(f"Processed {idx}/{len(sensor_ids)} sensors, {total_records} records so far")
 
         except Exception as e:
-            print(f"[WARNING] Failed to extract sensor {sensor_id}: {str(e)}")
+            log_warning(f"Failed to extract sensor {sensor_id}: {str(e)}")
             continue
 
-    print(f"[SUCCESS] Extracted {total_records} measurements from {len(sensor_ids)} sensors")
+    log_success(f"Extracted {total_records} measurements from {len(sensor_ids)} sensors")
     return all_measurements
 
 
@@ -275,7 +284,7 @@ def transform_measurements(measurements: list) -> pd.DataFrame:
         Rows with invalid datetime are automatically dropped.
     """
     if not measurements:
-        print("[WARNING] No measurements to transform")
+        log_warning("No measurements to transform")
         return pd.DataFrame()
 
     df = pd.DataFrame(measurements)
@@ -290,7 +299,7 @@ def transform_measurements(measurements: list) -> pd.DataFrame:
     # Sort by sensor and datetime
     df = df.sort_values(['sensor_id', 'datetime']).reset_index(drop=True)
 
-    print(f"[SUCCESS] Transformed {len(df)} measurement records")
+    log_success(f"Transformed {len(df)} measurement records")
     return df
 
 
@@ -320,37 +329,11 @@ def enrich_measurements_with_metadata(df: pd.DataFrame, locations: list) -> pd.D
     """
     try:
         if df.empty:
-            print("[WARNING] Empty DataFrame, cannot enrich")
+            log_warning("Empty DataFrame, cannot enrich")
             return df
 
         # Build sensor_id -> location metadata mapping
-        sensor_to_location = {}
-        for loc in locations:
-            loc_id = loc.get('id')
-            loc_name = loc.get('name')
-            locality = loc.get('locality')
-            timezone = loc.get('timezone')
-
-            country = loc.get('country', {})
-            country_code = country.get('code') if isinstance(country, dict) else 'VN'
-
-            coords = loc.get('coordinates', {})
-            latitude = coords.get('latitude') if coords else None
-            longitude = coords.get('longitude') if coords else None
-
-            sensors = loc.get('sensors', [])
-            for sensor in sensors:
-                sensor_id = sensor.get('id')
-                if sensor_id:
-                    sensor_to_location[sensor_id] = {
-                        'location_id': loc_id,
-                        'location_name': loc_name,
-                        'city': locality,
-                        'timezone': timezone,
-                        'country_code': country_code,
-                        'latitude': latitude,
-                        'longitude': longitude
-                    }
+        sensor_to_location = _build_sensor_metadata_map(locations)
 
         # Enrich each measurement with location metadata
         df['location_id'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('location_id'))
@@ -361,9 +344,59 @@ def enrich_measurements_with_metadata(df: pd.DataFrame, locations: list) -> pd.D
         df['latitude'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('latitude'))
         df['longitude'] = df['sensor_id'].map(lambda x: sensor_to_location.get(x, {}).get('longitude'))
 
-        print(f"[SUCCESS] Enriched {len(df)} records with location metadata")
+        log_success(f"Enriched {len(df)} records with location metadata")
         return df
 
     except Exception as e:
-        print(f"[FAIL] Failed to enrich measurements: {str(e)}")
+        log_fail(f"Failed to enrich measurements: {str(e)}")
         raise
+
+
+def _build_sensor_metadata_map(locations: list) -> dict:
+    """
+    Build sensor ID to location metadata mapping.
+    
+    Extracts metadata from location objects and creates a lookup dictionary
+    mapping sensor IDs to their associated location details.
+    
+    Args:
+        locations: List of location objects from API
+        
+    Returns:
+        dict: Mapping of sensor_id -> metadata dict
+    """
+    sensor_to_location = {}
+    
+    for loc in locations:
+        metadata = _extract_location_metadata(loc)
+        
+        for sensor in loc.get('sensors', []):
+            sensor_id = sensor.get('id')
+            if sensor_id:
+                sensor_to_location[sensor_id] = metadata
+    
+    return sensor_to_location
+
+
+def _extract_location_metadata(location: dict) -> dict:
+    """
+    Extract metadata from a single location object.
+    
+    Args:
+        location: Location object from API
+        
+    Returns:
+        dict: Location metadata (coordinates, city, country, etc.)
+    """
+    country = location.get('country', {})
+    coords = location.get('coordinates', {})
+    
+    return {
+        'location_id': location.get('id'),
+        'location_name': location.get('name'),
+        'city': location.get('locality'),
+        'timezone': location.get('timezone'),
+        'country_code': country.get('code') if isinstance(country, dict) else 'VN',
+        'latitude': coords.get('latitude') if coords else None,
+        'longitude': coords.get('longitude') if coords else None
+    }

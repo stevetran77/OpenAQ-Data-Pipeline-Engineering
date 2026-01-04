@@ -2,7 +2,8 @@
 
 An end-to-end data engineering pipeline that extracts air quality data from the **OpenAQ API v3**, processes it with AWS services, and makes it queryable via Amazon Athena. The system uses Apache Airflow for orchestration, AWS Lambda for extraction, AWS S3 for storage, AWS Glue for transformation, and Amazon Athena for querying.
 
-**Status**: [OK] Production-ready with recent bug fixes and enhancements
+**Status**: [OK] Production-ready with recent code refactoring and bug fixes  
+**Latest Update**: Code structure improvements (January 2026)
 
 ---
 
@@ -193,6 +194,43 @@ The `openaq_to_athena_pipeline` DAG performs:
 
 ## Recent Changes & Bug Fixes
 
+### [IMPROVED] Code Refactoring (January 2026)
+
+**Changes**: Comprehensive code structure improvements for better maintainability and readability.
+
+**Key Improvements**:
+
+1. **Shared Logging Module** (`utils/logging_utils.py`)
+   - Centralized status logging functions
+   - Eliminated ~200 lines of duplicate code
+   - Consistent formatting across all modules
+   - Functions: `log_info()`, `log_ok()`, `log_success()`, `log_fail()`, `log_warning()`, `log_start()`
+
+2. **Configuration Constants** (`utils/constants.py`)
+   - Extracted magic numbers into named constants
+   - Self-documenting timeout values and intervals
+   - Constants: `DEFAULT_LOOKBACK_DAYS`, `API_REQUEST_TIMEOUT`, `CRAWLER_POLL_INTERVAL`, etc.
+
+3. **Helper Functions**
+   - Extracted complex logic into focused helper functions
+   - `_build_sensor_metadata_map()` - 30-line nested loop simplified
+   - `_parse_lambda_extraction_result()` - 50-line XCom parsing extracted
+   - `_count_tables_with_data()` - Athena validation logic isolated
+
+4. **Code Quality**
+   - All Vietnamese comments translated to English
+   - Improved error messages with context
+   - Better function documentation
+   - More testable code structure
+
+**Files Updated**: 12 files across `etls/`, `pipelines/`, `utils/`, `dags/tasks/`, `glue_jobs/`
+
+**Impact**: 
+- ✅ Better maintainability - changes easier to implement
+- ✅ Improved readability - onboarding new developers faster
+- ✅ Enhanced testability - helper functions can be unit tested
+- ✅ Consistent patterns - reduced cognitive load
+
 ### [FIXED] Parameter Filtering Bug (December 2025)
 
 **Issue**: HCMC location (ID 3276359) wasn't being extracted despite having active PM2.5 sensor.
@@ -259,7 +297,12 @@ LOCATION_CITY_MAP = {
 │
 ├── pipelines/                   # High-level orchestration
 ├── etls/                        # ETL utilities
-├── utils/                       # Shared utilities (AWS, Constants)
+├── utils/                       # Shared utilities
+│   ├── aws_utils.py            # AWS S3 operations
+│   ├── glue_utils.py           # AWS Glue operations
+│   ├── athena_utils.py         # AWS Athena operations
+│   ├── constants.py            # Configuration and constants
+│   └── logging_utils.py        # [NEW] Shared logging functions
 ├── tests/                       # Unit and integration tests
 │
 ├── docker-compose.yml           # Container orchestration
@@ -429,5 +472,26 @@ For issues or questions:
 
 ---
 
-**Last Updated**: December 29, 2025
+**Last Updated**: January 4, 2026  
 **Maintained By**: Steve Tran
+
+---
+
+## Changelog
+
+### January 2026
+- ✅ Code refactoring: Added shared logging module
+- ✅ Code refactoring: Extracted configuration constants
+- ✅ Code refactoring: Simplified complex functions with helpers
+- ✅ Code refactoring: Internationalized codebase (English comments)
+
+### December 2025
+- ✅ Fixed parameter filtering bug (HCMC extraction)
+- ✅ Fixed city name mapping for HCMC locations
+- ✅ Enhanced Lambda deployment process
+
+### Initial Release
+- ✅ End-to-end pipeline implementation
+- ✅ AWS Lambda extraction
+- ✅ Glue transformation with PySpark
+- ✅ Athena query integration
